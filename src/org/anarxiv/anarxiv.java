@@ -54,8 +54,7 @@ public class anarxiv extends Activity
         _tabHost.addTab(tabspec);
         
         /* Fill the category list. */
-        String[] catlist = res.getStringArray(R.array.str_Category);
-        _uiCategoryList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, catlist));
+        _uiCategoryList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, UrlTable.Category));
         registerForContextMenu(_uiCategoryList);
     }
 }

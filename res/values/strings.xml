@@ -5,24 +5,5 @@
 <string name="tabstr_Category">Category</string>
 <string name="tabstr_Recent">Recent</string>
 <string name="tabstr_Favorite">Favorite</string>
-<string-array name="str_Category"><item>Astrophysics</item>
-<item>Condensed Matter</item>
-<item>Computer Science</item>
-<item>General Relativity</item>
-<item>HEP Experiment</item>
-<item>HEP Lattice</item>
-<item>HEP Phenomenology</item>
-<item></item>
-<item>HEP Theory</item>
-<item>Mathematics</item>
-<item>Math. Physics</item>
-<item>Misc Physics</item>
-<item>Nonlinear Sci.</item>
-<item>Nuclear Exp.</item>
-<item>Nuclear Theory</item>
-<item>Quant. Biology</item>
-<item>Quant. Finance</item>
-<item>Quantum Physics</item>
-<item>Statistics</item>
-</string-array>
+
 </resources>
