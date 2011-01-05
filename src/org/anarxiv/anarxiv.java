@@ -3,11 +3,13 @@ package org.anarxiv;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TabHost;
+import android.widget.AdapterView;
 
-public class anarxiv extends Activity
+public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 {
 	/* UI components. */
 	private TabHost _tabHost = null;
@@ -30,6 +32,9 @@ public class anarxiv extends Activity
         _uiCategoryList = (ListView)findViewById(R.id.categorylist);
         _uiRecentList = (ListView)findViewById(R.id.recentlist);
         _uiFavoriteList = (ListView)findViewById(R.id.favlist);
+        
+        /* event handler. */
+        _uiCategoryList.setOnItemClickListener(this);
         
         /* Tab host setup. */
         _tabHost = (TabHost)findViewById(R.id.tabhost);
@@ -57,4 +62,23 @@ public class anarxiv extends Activity
         _uiCategoryList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, UrlTable.Category));
         registerForContextMenu(_uiCategoryList);
     }
+
+	public void onItemClick(AdapterView<?> a, View v, int position, long id) 
+	{
+		/* category clicked. */
+		if(a.getId() == R.id.categorylist)
+		{
+			
+		}
+		/* recent  clicked.*/
+		else if(a.getId() == R.id.recentlist)
+		{
+			
+		}
+		/* favorite clicked. */
+		else if(a.getId() == R.id.favlist)
+		{
+			
+		}
+	}
 }

@@ -1,8 +1,17 @@
 package org.anarxiv;
 
+import java.util.HashMap;
+
+/**
+ * This class stores url and corresponding descriptions that will be displayed 
+ * on the gui.
+ * 
+ * @author lihe
+ *
+ */
 public class UrlTable 
 {
-	/* main category. */
+	/** main category. */
 	public final static String[] Category = {"Astrophysics",
 											 "Condensed Matter",
 											 "Physics",
@@ -13,7 +22,7 @@ public class UrlTable
 											 "Quantitative Finance",
 											 "Statistics"};
 	
-	/* sub category: physics. */
+	/** sub category: physics. */
 	/* TODO: missing: General Relativity and Quantum Cosmology, HEP, Nuclear. */
 	public final static String[] Subcategory_Physics 
 		= {"Accelerator Physics",
@@ -38,7 +47,7 @@ public class UrlTable
 		   "Popular Physics",
 		   "Space Physics"};
 	
-	/* sub category: mathematics. */
+	/** sub category: mathematics. */
 	public final static String[] Subcategory_Mathematics 
 		= {"Algebraic Geometry",
 		   "Algebraic Topology", 
@@ -73,7 +82,7 @@ public class UrlTable
 		   "Statistics Theory", 
 		   "Symplectic Geometry"};
 	
-	/* sub category: nonlinear science. */
+	/** sub category: nonlinear science. */
 	public final static String[] Subcategory_NonlinearSci 
 		= {"Adaptation and Self-Organizing Systems",
 		   "Cellular Automata and Lattice Gases",
@@ -81,7 +90,7 @@ public class UrlTable
 		   "Exactly Solvable and Integrable Systems",
 		   "Pattern Formation and Solitons"};
 	
-	/* sub category: computer science. */
+	/** sub category: computer science. */
 	public final static String[] Subcategory_CS 
 		= {"Artificial Intelligence", 
 		   "Computation and Language", 
@@ -123,7 +132,7 @@ public class UrlTable
 		   "Symbolic Computation",
 		   "Systems and Control"};
 	
-	/* sub category: quantitative biology. */
+	/** sub category: quantitative biology. */
 	public final static String[] Subcategory_QuantBio 
 		= {"Biomolecules",
 		   "Cell Behavior",
@@ -136,7 +145,7 @@ public class UrlTable
 		   "Subcellular Processes",
 		   "Tissues and Organs"};
 	
-	/* sub category: quantitative finance. */
+	/** sub category: quantitative finance. */
 	public final static String[] Subcategory_QuantFinance 
 		= {"Computational Finance",
 		   "General Finance",
@@ -146,7 +155,7 @@ public class UrlTable
 		   "Statistical Finance",
 		   "Trading and Market Microstructure"};
 	
-	/* sub category: statistics. */
+	/** sub category: statistics. */
 	public final static String[] Subcategory_Statistics 
 		= {"Applications",
 		   "Computation",
@@ -154,4 +163,42 @@ public class UrlTable
 		   "Methodology",
 		   "Other Statistics",
 		   "Statistics Theory"};
+	
+	/** category-to-subcategory map. */
+	private HashMap<String, String[]> _SubcategoryMap = new HashMap<String, String[]>();
+	
+	/** subcategory-to-url map. */
+	private HashMap<String, String> _UrlMap = new HashMap<String, String>();
+	
+	/** 
+	 * constructor.
+	 * maps are built here.
+	 */
+	public UrlTable()
+	{
+		this.buildSubcategoryMap();
+		this.buildUrlMap();
+	}
+	
+	/**
+	 * build _SubcategoryMap.
+	 */
+	private void buildSubcategoryMap()
+	{
+		this._SubcategoryMap.put(UrlTable.Category[2], UrlTable.Subcategory_Physics);
+		this._SubcategoryMap.put(UrlTable.Category[3], UrlTable.Subcategory_Mathematics);
+		this._SubcategoryMap.put(UrlTable.Category[4], UrlTable.Subcategory_NonlinearSci);
+		this._SubcategoryMap.put(UrlTable.Category[5], UrlTable.Subcategory_CS);
+		this._SubcategoryMap.put(UrlTable.Category[6], UrlTable.Subcategory_QuantBio);
+		this._SubcategoryMap.put(UrlTable.Category[7], UrlTable.Subcategory_QuantFinance);
+		this._SubcategoryMap.put(UrlTable.Category[8], UrlTable.Subcategory_Statistics);
+	}
+	
+	/**
+	 * build _UrlMap.
+	 */
+	private void buildUrlMap()
+	{
+		
+	}
 }
