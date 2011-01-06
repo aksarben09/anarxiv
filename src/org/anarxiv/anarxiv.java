@@ -1,6 +1,7 @@
 package org.anarxiv;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +18,9 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 	private ListView _uiCategoryList = null;
 	private ListView _uiRecentList = null;
 	private ListView _uiFavoriteList = null;
+	
+	/** Url table. */
+	public static final UrlTable _urlTbl = new UrlTable();
 	
     /** Called when the activity is first created. */
     @Override
@@ -63,12 +67,21 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
         registerForContextMenu(_uiCategoryList);
     }
 
+    /** Handler: onItemClick. */
 	public void onItemClick(AdapterView<?> a, View v, int position, long id) 
 	{
 		/* category clicked. */
+		Class c = null;
+		
 		if(a.getId() == R.id.categorylist)
 		{
+			String mainCatItem = (String)a.getItemAtPosition(position);
+			String[] subCatList = _urlTbl.getSubcategoryList(mainCatItem);
 			
+			Intent intent = new Intent(this, SubCategoryWnd.class);
+			intent.putExtra("subcatname", mainCatItem);
+			intent.putExtra("subcatlist", subCatList);
+			startActivity(intent);
 		}
 		/* recent  clicked.*/
 		else if(a.getId() == R.id.recentlist)

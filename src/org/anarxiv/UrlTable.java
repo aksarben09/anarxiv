@@ -12,15 +12,51 @@ import java.util.HashMap;
 public class UrlTable 
 {
 	/** main category. */
-	public final static String[] Category = {"Astrophysics",
-											 "Condensed Matter",
-											 "Physics",
-											 "Mathematics",
-											 "Nonlinear Sciences",
-											 "Computer Science",
-											 "Quantitative Biology",
-											 "Quantitative Finance",
-											 "Statistics"};
+	public final static String[] Category = {"Astrophysics", 			// 0
+											 "Condensed Matter",		// 1
+											 "Physics",					// 2
+											 "High Energy Physics",		// 3
+											 "Nuclear",					// 4
+											 "Mathematics",				// 5
+											 "Nonlinear Sciences",		// 6
+											 "Computer Science",		// 7
+											 "Quantitative Biology",	// 8
+											 "Quantitative Finance",	// 9
+											 "Statistics"				// 10
+											 };
+	
+	/** sub category: astrophysics. */
+	public final static String[] Subcategory_Astrophysics
+		= {"Cosmology and Extragalactic",
+		   "Earth and Planetary",
+		   "Galaxy",
+		   "High Energy Phenomena",
+		   "Instrumentation and Methods",
+		   "Solar and Stellar"};
+	
+	/** sub category: condensed matter. */
+	public final static String[] Subcategory_CondensedMatter
+		= {"Disordered Systems and Neural Networks",
+		   "Materials Science",
+		   "Mesoscale and Nanoscale Physics",
+		   "Other Condensed Matter",
+		   "Quantum Gases",
+		   "Soft Condensed Matter",
+		   "Statistical Mechanics",
+		   "Strongly Correlated Electrons",
+		   "Superconductivity"};
+	
+	/** sub category: high energy physics. */
+	public final static String[] Subcategory_HEP
+		= {"Experiment",
+		   "Lattice",
+		   "Phenomenology",
+		   "Theory"};
+	
+	/** sub category: nuclear. */
+	public final static String[] Subcategory_Nuclear
+		= {"Experiment",
+		   "Theory"};
 	
 	/** sub category: physics. */
 	/* TODO: missing: General Relativity and Quantum Cosmology, HEP, Nuclear. */
@@ -185,13 +221,17 @@ public class UrlTable
 	 */
 	private void buildSubcategoryMap()
 	{
+		this._SubcategoryMap.put(UrlTable.Category[0], UrlTable.Subcategory_Astrophysics);
+		this._SubcategoryMap.put(UrlTable.Category[1], UrlTable.Subcategory_CondensedMatter);
 		this._SubcategoryMap.put(UrlTable.Category[2], UrlTable.Subcategory_Physics);
-		this._SubcategoryMap.put(UrlTable.Category[3], UrlTable.Subcategory_Mathematics);
-		this._SubcategoryMap.put(UrlTable.Category[4], UrlTable.Subcategory_NonlinearSci);
-		this._SubcategoryMap.put(UrlTable.Category[5], UrlTable.Subcategory_CS);
-		this._SubcategoryMap.put(UrlTable.Category[6], UrlTable.Subcategory_QuantBio);
-		this._SubcategoryMap.put(UrlTable.Category[7], UrlTable.Subcategory_QuantFinance);
-		this._SubcategoryMap.put(UrlTable.Category[8], UrlTable.Subcategory_Statistics);
+		this._SubcategoryMap.put(UrlTable.Category[3], UrlTable.Subcategory_HEP);
+		this._SubcategoryMap.put(UrlTable.Category[4], UrlTable.Subcategory_Nuclear);
+		this._SubcategoryMap.put(UrlTable.Category[5], UrlTable.Subcategory_Mathematics);
+		this._SubcategoryMap.put(UrlTable.Category[6], UrlTable.Subcategory_NonlinearSci);
+		this._SubcategoryMap.put(UrlTable.Category[7], UrlTable.Subcategory_CS);
+		this._SubcategoryMap.put(UrlTable.Category[8], UrlTable.Subcategory_QuantBio);
+		this._SubcategoryMap.put(UrlTable.Category[9], UrlTable.Subcategory_QuantFinance);
+		this._SubcategoryMap.put(UrlTable.Category[10], UrlTable.Subcategory_Statistics);
 	}
 	
 	/**
@@ -200,5 +240,21 @@ public class UrlTable
 	private void buildUrlMap()
 	{
 		
+	}
+	
+	/**
+	 * get the subcategory list of a main category.
+	 */
+	public String[] getSubcategoryList(String mainCat)
+	{
+		return this._SubcategoryMap.get(mainCat);
+	}
+	
+	/**
+	 * get the url for a subcategory item.
+	 */
+	public String getUrl(String subCat)
+	{
+		return this._UrlMap.get(subCat);
 	}
 }
