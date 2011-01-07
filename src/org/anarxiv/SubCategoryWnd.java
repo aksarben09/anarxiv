@@ -49,12 +49,19 @@ public class SubCategoryWnd extends Activity implements OnItemClickListener
 		
 		/* title. */
 		_uiSubCatName.setText(_subCatName);
+		
+		/* event listener. */
+		_uiSubCatList.setOnItemClickListener(this);
 	}
 	
 	/** handler: onItemClick. */
 	public void onItemClick(AdapterView<?> a, View v, int position, long id) 
 	{
 		// TODO Auto-generated method stub
-		
+		if(a.getId() == R.id.subcategorylist)
+		{
+			String catName = (String)a.getItemAtPosition(position);
+			String qstring = anarxiv._urlTbl.getQueryString(catName);
+		}
 	}
 }

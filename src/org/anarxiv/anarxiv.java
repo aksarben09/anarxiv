@@ -71,8 +71,6 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 	public void onItemClick(AdapterView<?> a, View v, int position, long id) 
 	{
 		/* category clicked. */
-		Class c = null;
-		
 		if(a.getId() == R.id.categorylist)
 		{
 			String mainCatItem = (String)a.getItemAtPosition(position);

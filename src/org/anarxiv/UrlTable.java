@@ -1,7 +1,7 @@
 package org.anarxiv;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
@@ -283,9 +283,18 @@ public class UrlTable
 	/**
 	 * get the url for a subcategory item.
 	 */
-	public String getQueryString(String subCat)
+	public String getQueryString(String subCatName)
 	{
-//		TreeMap<String, String>[] subcatList = this._BigMap.values().toArray(new TreeMap<String, String>[0]);
+		Collection<TreeMap<String, String>> subcatList = this._BigMap.values();
+		
+		for(TreeMap<String, String> subcat: subcatList)
+		{
+			if(subcat.containsKey(subCatName) == true)
+			{
+				return subcat.get(subCatName);
+			}
+		}
+		
 		return null;
 	}
 }
