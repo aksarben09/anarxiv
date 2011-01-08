@@ -281,7 +281,7 @@ public class UrlTable
 	}
 	
 	/**
-	 * get the url for a subcategory item.
+	 * get the query string for a subcategory item.
 	 */
 	public String getQueryString(String subCatName)
 	{
@@ -296,5 +296,16 @@ public class UrlTable
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * make the query url.
+	 */
+	public static String makeQueryUrl(String subCatName, int start, int maxResults)
+	{
+		String url = "http://export.arxiv.org/api/query?search_query=cat:" + subCatName + 
+					 "&sortBy=submittedDate&sortOrder=descending&start=" + start +
+					 "&max_results=" + maxResults;
+		return url;
 	}
 }

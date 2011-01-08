@@ -6,4 +6,6 @@
 <string name="tabstr_Recent">Recent</string>
 <string name="tabstr_Favorite">Favorite</string>
 
+<string name="error_dialog_title">Error</string>
+<string name="confirm_btn_caption">OK</string>
 </resources>

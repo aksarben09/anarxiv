@@ -1,5 +1,7 @@
 package org.anarxiv;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.app.AlertDialog;
 
 
 /**
@@ -26,6 +29,9 @@ public class SubCategoryWnd extends Activity implements OnItemClickListener
 	
 	/** sub category list. */
 	private String[] _subCatList = null;
+	
+	/** arxiv loader. */
+	private ArxivLoader _arxivLoader = new ArxivLoader();
 
 	/** Called when the activity is first created. */
 	@Override
@@ -62,6 +68,18 @@ public class SubCategoryWnd extends Activity implements OnItemClickListener
 		{
 			String catName = (String)a.getItemAtPosition(position);
 			String qstring = anarxiv._urlTbl.getQueryString(catName);
+			
+			try
+			{
+				ArrayList<ArxivLoader.Paper> paperList = _arxivLoader.loadPapers(qstring);
+			}
+			catch(ArxivLoader.LoaderException e)
+			{
+				new AlertDialog.Builder(this).setTitle(R.string.error_dialog_title)
+											 .setMessage(e.getMessage())
+											 .setPositiveButton(R.string.confirm_btn_caption, null)
+											 .show();
+			}
 		}
 	}
 }
