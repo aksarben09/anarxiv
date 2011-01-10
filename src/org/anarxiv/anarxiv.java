@@ -22,6 +22,19 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 	/** Url table. */
 	public static final UrlTable _urlTbl = new UrlTable();
 	
+	/** arxiv loader */
+	private static ArxivLoader _arxivLoader = null;
+	
+	/**
+	 * 
+	 */
+	public static ArxivLoader getArxivLoaderInstance()
+	{
+		if(anarxiv._arxivLoader == null)
+			anarxiv._arxivLoader = new ArxivLoader();
+		return anarxiv._arxivLoader;
+	}
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)

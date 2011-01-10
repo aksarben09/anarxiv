@@ -13,6 +13,7 @@
         </activity>
 
     <activity android:name="SubCategoryWnd"></activity>
+    <activity android:name="PaperListWnd"></activity>
 </application>
 
 

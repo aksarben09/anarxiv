@@ -4,6 +4,9 @@
 package org.anarxiv;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.net.URL;
 import java.net.URLConnection;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -76,6 +79,32 @@ public class ArxivLoader
 	 * max results.
 	 */
 	private int _maxResults = 10;
+	
+	/**
+	 * convert a paper list to a map list for SimpleAdapter.
+	 */
+	public static List<Map<String, Object>> toMapList(List<Paper> paperList)
+	{
+		if (paperList == null)
+			return null;
+		
+		/* conver the paper list to a map list. */
+		List<Map<String, Object>> mapList = new ArrayList<Map<String, Object>>();
+		
+		for (Paper paper: paperList)
+		{
+			Map<String, Object> paperMap = new HashMap<String, Object>();
+			
+			paperMap.put("date", paper._date);
+			paperMap.put("title", paper._title);
+			paperMap.put("summary", paper._summary);
+			paperMap.put("author", paper._authors.get(0) + ", et al");
+			
+			mapList.add(paperMap);
+		}
+		
+		return mapList;
+	}
 	
 	/**
 	 * load paper list from specified url.
