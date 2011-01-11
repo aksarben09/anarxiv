@@ -24,11 +24,11 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 	/** Url table. */
 	public static final UrlTable _urlTbl = new UrlTable();
 	
-	/** arxiv loader */
+	/** arxiv loader. */
 	private static ArxivLoader _arxivLoader = null;
 	
 	/**
-	 * 
+	 * get ArxivLoader instance.
 	 */
 	public static ArxivLoader getArxivLoaderInstance()
 	{
@@ -90,7 +90,7 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
         _tabHost.addTab(tabspec);
         
         /* Fill the category list. */
-        _uiCategoryList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, UrlTable.Category));
+        _uiCategoryList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, /*UrlTable.Category*/_urlTbl.getMainCategoryList()));
         registerForContextMenu(_uiCategoryList);
     }
 

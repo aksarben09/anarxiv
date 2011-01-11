@@ -16,6 +16,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 
 /**
  * @author lihe
@@ -95,10 +96,13 @@ public class ArxivLoader
 		{
 			Map<String, Object> paperMap = new HashMap<String, Object>();
 			
+			/* get the first author from author list. */
+			String author = paper._authors.size() == 1 ? paper._authors.get(0) : paper._authors.get(0) + ", et al";
+			
 			paperMap.put("date", paper._date);
 			paperMap.put("title", paper._title);
 			paperMap.put("summary", paper._summary);
-			paperMap.put("author", paper._authors.get(0) + ", et al");
+			paperMap.put("author", author);
 			paperMap.put("authorlist", paper._authors);
 			paperMap.put("url", paper._url);
 			
@@ -106,6 +110,22 @@ public class ArxivLoader
 		}
 		
 		return mapList;
+	}
+	
+	/**
+	 * setter for _maxResults.
+	 */
+	public void setMaxResults(int maxResults)
+	{
+		_maxResults = maxResults;
+	}
+	
+	/**
+	 * getter for _maxResults.
+	 */
+	public int getMaxResults()
+	{
+		return _maxResults;
 	}
 	
 	/**
@@ -133,14 +153,20 @@ public class ArxivLoader
 		
 		try
 		{
+			/* open url and set timeout. */
 			URL url = new URL(_qUrl);
 			URLConnection conn = url.openConnection();
+			conn.setReadTimeout(ConstantTable.getPaperListLoadTimeout());
 
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			doc = db.parse(conn.getInputStream());
 		}
 		catch(MalformedURLException e)
+		{
+			throw new LoaderException(e.getMessage(), e);
+		}
+		catch(SocketTimeoutException e)
 		{
 			throw new LoaderException(e.getMessage(), e);
 		}
@@ -187,7 +213,7 @@ public class ArxivLoader
 			entry._id = id;
 			entry._date = date.replace('T',	' ').replace('Z', ' ');
 			entry._title = title.replace("\n ", " ");
-			entry._summary = summary;
+			entry._summary = summary.replace('\n', ' ').replace("  ", "\n  ").substring(1);
 			entry._authors = authors;
 			entry._url = url;
 			

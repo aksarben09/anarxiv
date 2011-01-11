@@ -1,7 +1,6 @@
 package org.anarxiv;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.TreeMap;
 
 /**
@@ -28,7 +27,7 @@ public class UrlTable
 											 };
 	
 	/** the BIG MAP, mapping subcategories. */
-	private HashMap<String, TreeMap<String, String>> _BigMap = new HashMap<String, TreeMap<String, String>>();
+	private TreeMap<String, TreeMap<String, String>> _BigMap = new TreeMap<String, TreeMap<String, String>>();
 	
 	/** sub category: astrophysics. */
 	private TreeMap<String, String> _UrlMap_Astrophysics = new TreeMap<String, String>();
@@ -268,6 +267,15 @@ public class UrlTable
 		this._UrlMap_Statistics.put("Methodology", 			"stat.ME");
 		this._UrlMap_Statistics.put("Other Statistics", 	"stat.OT");
 		this._UrlMap_Statistics.put("Statistics Theory", 	"stat.TH");
+	}
+	
+	/**
+	 * get the main category list.
+	 */
+	public String[] getMainCategoryList()
+	{
+		String[] mainCategoryNames = _BigMap.keySet().toArray(new String[0]);
+		return mainCategoryNames;
 	}
 	
 	/**

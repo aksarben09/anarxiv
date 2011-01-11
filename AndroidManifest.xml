@@ -12,15 +12,11 @@
             </intent-filter>
         </activity>
 
-    <activity android:name="SubCategoryWnd"></activity>
-    <activity android:name="PaperListWnd"></activity>
-<activity android:name="PaperDetailWnd"></activity>
-</application>
+    	<activity android:name="SubCategoryWnd"></activity>
+    	<activity android:name="PaperListWnd" android:configChanges="orientation"></activity>
+		<activity android:name="PaperDetailWnd"></activity>
+	</application>
 
-
-
-
-
-<uses-permission android:name="android.permission.INTERNET"></uses-permission>
-
+	<uses-permission android:name="android.permission.INTERNET"></uses-permission>
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
 </manifest> 
