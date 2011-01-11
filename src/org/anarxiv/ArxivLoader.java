@@ -100,6 +100,7 @@ public class ArxivLoader
 			paperMap.put("summary", paper._summary);
 			paperMap.put("author", paper._authors.get(0) + ", et al");
 			paperMap.put("authorlist", paper._authors);
+			paperMap.put("url", paper._url);
 			
 			mapList.add(paperMap);
 		}
