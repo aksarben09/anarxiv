@@ -99,6 +99,7 @@ public class ArxivLoader
 			paperMap.put("title", paper._title);
 			paperMap.put("summary", paper._summary);
 			paperMap.put("author", paper._authors.get(0) + ", et al");
+			paperMap.put("authorlist", paper._authors);
 			
 			mapList.add(paperMap);
 		}
@@ -183,8 +184,8 @@ public class ArxivLoader
 			/* fill in paper structure. */
 			Paper entry = new Paper();
 			entry._id = id;
-			entry._date = date;
-			entry._title = title;
+			entry._date = date.replace('T',	' ').replace('Z', ' ');
+			entry._title = title.replace("\n ", " ");
 			entry._summary = summary;
 			entry._authors = authors;
 			entry._url = url;

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:layout_width="fill_parent"
+			  android:layout_height="fill_parent"
+			  android:orientation="vertical">
+	
+	<TextView android:id="@+id/paperdetail_title"
+			  android:layout_width="fill_parent"
+			  android:layout_height="wrap_content"
+			  android:textSize="21sp"
+			  android:textColor="#ff3000"/>
+	<TextView android:id="@+id/paperdetail_date"
+			  android:layout_width="fill_parent"
+			  android:layout_height="wrap_content"
+			  android:textColor="#1b53f4"/>
+	<ListView android:id="@+id/paperdetail_authorlist"
+			  android:layout_width="fill_parent"
+			  android:layout_height="wrap_content"/>
+	<TextView android:id="@+id/paperdetail_summary"
+			  android:layout_width="fill_parent"
+			  android:layout_height="wrap_content"/>
+			  
+</LinearLayout>

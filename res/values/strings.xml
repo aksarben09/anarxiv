@@ -8,6 +8,6 @@
 
 <string name="error_dialog_title">Error</string>
 <string name="confirm_btn_caption">OK</string>
-<string name="wait_dialog_title">Please wait</string>
-<string name="wait_dialog_msg">Loading data...</string>
+<string name="wait_dialog_title">Loading, please wait...</string>
+
 </resources>
