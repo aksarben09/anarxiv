@@ -151,6 +151,9 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.paperlist);
 		
+		/* reste loader. */
+		_arxivLoader.reset();
+		
 		/* get intent params. */
 		Intent intent = getIntent();
 		_paperCategory = intent.getStringExtra("category");

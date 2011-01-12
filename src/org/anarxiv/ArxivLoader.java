@@ -129,6 +129,15 @@ public class ArxivLoader
 	}
 	
 	/**
+	 * reset loader.
+	 */
+	public void reset()
+	{
+		_qStart = 0;
+		_qCat = null;
+	}
+	
+	/**
 	 * load paper list from specified url.
 	 */
 	public ArrayList<Paper> loadPapers(String category) throws LoaderException
