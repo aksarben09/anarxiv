@@ -45,7 +45,7 @@ public class PaperDetailWnd extends Activity
 	{
 		if(pdfFile.exists() == false)
 		{
-			anarxiv.showErrorMessage(this, "File does not exist: " + pdfFile.getName());
+			UIUtils.showErrorMessage(this, "File does not exist: " + pdfFile.getName());
 			return;
 		}
 		

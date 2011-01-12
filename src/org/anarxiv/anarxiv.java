@@ -1,8 +1,6 @@
 package org.anarxiv;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -35,18 +33,6 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		if(anarxiv._arxivLoader == null)
 			anarxiv._arxivLoader = new ArxivLoader();
 		return anarxiv._arxivLoader;
-	}
-	
-	/**
-	 * show an error box.
-	 */
-	public static void showErrorMessage(Context context, String errMsg)
-	{
-		new AlertDialog.Builder(context)
-					   .setTitle(R.string.error_dialog_title)
-					   .setMessage(errMsg)
-					   .setPositiveButton(R.string.confirm_btn_caption, null)
-					   .show();
 	}
 	
     /** Called when the activity is first created. */
