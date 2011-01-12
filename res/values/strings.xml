@@ -8,6 +8,9 @@
 
 <string name="error_dialog_title">Error</string>
 <string name="confirm_btn_caption">OK</string>
-<string name="wait_dialog_title">Loading, please wait...</string>
+<string name="loading_please_wait">Loading, please wait...</string>
 
+<string name="menu_paperdetail_view">View</string>
+<string name="menu_paperdetail_share">Share</string>
+<string name="error_no_pdf_viewer">No available PDF view found.</string>
 </resources>

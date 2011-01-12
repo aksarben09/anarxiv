@@ -7,14 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 
@@ -163,13 +166,65 @@ public class ArxivLoader
 		try
 		{
 			/* open url and set timeout. */
-			URL url = new URL(_qUrl);
-			URLConnection conn = url.openConnection();
+			URL Url = new URL(_qUrl);
+			HttpURLConnection conn = (HttpURLConnection)Url.openConnection();
+			conn.setConnectTimeout(ConstantTable.getPaperListLoadTimeout());
 			conn.setReadTimeout(ConstantTable.getPaperListLoadTimeout());
 
+			/* prepare xml parser. */
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			doc = db.parse(conn.getInputStream());
+			
+			/* get input stream. */
+			InputStream httpInStream = conn.getInputStream();
+			doc = db.parse(httpInStream);
+			
+			/* parse xml. */
+			NodeList entryList = doc.getElementsByTagName("entry");
+			
+			/* allocate paper list. */
+			ArrayList<Paper> paperList = new ArrayList<Paper>();
+			
+			/* extract paper info. */
+			for(int i = 0; i < entryList.getLength(); i ++)
+			{
+				Element node = (Element)entryList.item(i);
+				
+				/* get simple tags. */
+				String id = node.getElementsByTagName("id").item(0).getFirstChild().getNodeValue();
+				String title = node.getElementsByTagName("title").item(0).getFirstChild().getNodeValue();
+				String summary = node.getElementsByTagName("summary").item(0).getFirstChild().getNodeValue();
+				String date = node.getElementsByTagName("published").item(0).getFirstChild().getNodeValue();
+				
+				/* get author list. */
+				ArrayList<String> authors = new ArrayList<String>();
+				NodeList authorList = node.getElementsByTagName("author");
+				for(int j = 0; j < authorList.getLength(); j ++)
+				{
+					Element authorNode = (Element)authorList.item(j);
+					String ath = authorNode.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
+					authors.add(ath);
+				}
+				
+				/* get url. */
+				String url = ((Element)node.getElementsByTagName("link").item(1)).getAttribute("href");
+				
+				/* fill in paper structure. */
+				Paper entry = new Paper();
+				entry._id = id;
+				entry._date = date.replace('T',	' ').replace('Z', ' ');
+				entry._title = title.replace("\n ", " ");
+				entry._summary = summary.replace('\n', ' ').replace("  ", "\n  ").substring(1);
+				entry._authors = authors;
+				entry._url = url;
+				
+				paperList.add(entry);
+			}
+			
+			/* increase starting point. */
+			_qStart += _maxResults;
+			
+			return paperList;
 		}
 		catch(MalformedURLException e)
 		{
@@ -183,55 +238,13 @@ public class ArxivLoader
 		{
 			throw new LoaderException(e.getMessage(), e);
 		}
+		catch(SAXException e)
+		{
+			throw new LoaderException("Bad data received, possibly bad connection.", e);
+		}
 		catch(Exception e)
 		{
 			throw new LoaderException(e.getMessage());
 		}
-		
-		NodeList entryList = doc.getElementsByTagName("entry");
-		
-		/* allocate paper list. */
-		ArrayList<Paper> paperList = new ArrayList<Paper>();
-		
-		/* extract paper info. */
-		for(int i = 0; i < entryList.getLength(); i ++)
-		{
-			Element node = (Element)entryList.item(i);
-			
-			/* get simple tags. */
-			String id = node.getElementsByTagName("id").item(0).getFirstChild().getNodeValue();
-			String title = node.getElementsByTagName("title").item(0).getFirstChild().getNodeValue();
-			String summary = node.getElementsByTagName("summary").item(0).getFirstChild().getNodeValue();
-			String date = node.getElementsByTagName("published").item(0).getFirstChild().getNodeValue();
-			
-			/* get author list. */
-			ArrayList<String> authors = new ArrayList<String>();
-			NodeList authorList = node.getElementsByTagName("author");
-			for(int j = 0; j < authorList.getLength(); j ++)
-			{
-				Element authorNode = (Element)authorList.item(j);
-				String ath = authorNode.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
-				authors.add(ath);
-			}
-			
-			/* get url. */
-			String url = ((Element)node.getElementsByTagName("link").item(1)).getAttribute("href");
-			
-			/* fill in paper structure. */
-			Paper entry = new Paper();
-			entry._id = id;
-			entry._date = date.replace('T',	' ').replace('Z', ' ');
-			entry._title = title.replace("\n ", " ");
-			entry._summary = summary.replace('\n', ' ').replace("  ", "\n  ").substring(1);
-			entry._authors = authors;
-			entry._url = url;
-			
-			paperList.add(entry);
-		}
-		
-		/* increase starting point. */
-		_qStart += _maxResults;
-		
-		return paperList;
 	}
 }

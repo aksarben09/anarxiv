@@ -71,9 +71,8 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 			/* get mainlooper. */
 			Looper mainLooper = Looper.getMainLooper();
 			
-
 			try
-			{
+			{	
 				/* get data. */
 				ArrayList<ArxivLoader.Paper> newPaperList = _arxivLoader.loadPapers(_paperCategory);
 				List<Map<String, Object>> paperMapList = ArxivLoader.toMapList(newPaperList);
@@ -86,10 +85,15 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 			}
 			catch(ArxivLoader.LoaderException e)
 			{
-				new AlertDialog.Builder(PaperListWnd.this).setTitle(R.string.error_dialog_title)
-								.setMessage(e.getMessage())
-							   .setPositiveButton(R.string.confirm_btn_caption, null)
-							   .show();
+//				new AlertDialog.Builder(PaperListWnd.this).setTitle(R.string.error_dialog_title)
+//							   .setMessage(e.getMessage())
+//							   .setPositiveButton(R.string.confirm_btn_caption, null)
+//							   .show();
+				
+				ExceptionHandler handler = new ExceptionHandler(mainLooper);
+				Message msg = handler.obtainMessage(0, e.getMessage());
+				handler.removeMessages(0);
+				handler.sendMessage(msg);
 			}
 		}
 	}
@@ -142,6 +146,42 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 		}
 	}
 	
+	/**
+	 * error handler.
+	 */
+	private class ExceptionHandler extends Handler
+	{
+		/**
+		 * 
+		 */
+		public ExceptionHandler(Looper looper)
+		{
+			super(looper);
+		}
+		
+		/**
+		 * handler.
+		 */
+		@Override
+		public void handleMessage(Message msg)
+		{
+			/* dismiss busy box if any. */
+			if (_uiBusyBox != null)
+			{
+				_uiBusyBox.dismiss();
+				_uiBusyBox = null;
+			}
+			
+			_isLoading = false;
+			
+			/* show error message. */
+			new AlertDialog.Builder(PaperListWnd.this).setTitle(R.string.error_dialog_title)
+						   .setMessage((String)msg.obj)
+			   			   .setPositiveButton(R.string.confirm_btn_caption, null)
+			   			   .show();
+		}
+	}
+	
 	/** 
 	 * Called when the activity is first created. 
 	 */
@@ -171,9 +211,8 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 		_uiPaperList.setOnScrollListener(this);
 		
 		/* show busy box. */
-		_uiBusyBox = ProgressDialog.show(this, 
-										 getResources().getText(R.string.wait_dialog_title), 
-										 "");
+		_uiBusyBox = ProgressDialog.show(this, "",
+										 getResources().getText(R.string.loading_please_wait));
 		
 		ArxivLoadingThread t = new ArxivLoadingThread();
 		t.start();
@@ -213,9 +252,9 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 					
 				/* show busy box. */
 				_uiBusyBox = ProgressDialog.show(this, 
+												 "",
 												 getResources().
-												 getText(R.string.wait_dialog_title), 
-												 "");
+												 	getText(R.string.loading_please_wait));
 			}
 			catch(IllegalThreadStateException e)
 			{
