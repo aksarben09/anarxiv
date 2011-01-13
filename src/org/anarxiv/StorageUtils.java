@@ -64,4 +64,36 @@ public class StorageUtils
 			throw e;
 		}
 	}
+	
+	/**
+	 * remove all files (exclude sub dirs) in a dir.
+	 */
+	public static boolean removeAllFiles(String path) throws SecurityException
+	{
+		try
+		{
+			File dir = new File(path);
+			boolean allRemoved = true;
+			
+			/* list the dir. */
+			File[] files = dir.listFiles();
+			
+			if (files == null)
+				return false;
+			
+			/* iterate through all the files and delete them. */
+			for (File file: files)
+			{
+				if (file.isFile() == true)
+					if (file.delete() == false)
+						allRemoved = false;
+			}
+			
+			return allRemoved;
+		}
+		catch(SecurityException e)
+		{
+			throw e;
+		}
+	}
 }
