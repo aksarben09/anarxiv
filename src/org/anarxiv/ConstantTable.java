@@ -27,4 +27,12 @@ public class ConstantTable
 	{
 		return _timeoutPaperListLoad;
 	}
+	
+	/**
+	 * get application root dir.
+	 */
+	public static String getAppRootDir()
+	{
+		return StorageUtils.getExternalStorageRoot() + "/aNarXiv";
+	}
 }

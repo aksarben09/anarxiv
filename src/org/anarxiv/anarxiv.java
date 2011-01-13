@@ -1,5 +1,7 @@
 package org.anarxiv;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -35,12 +37,42 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		return anarxiv._arxivLoader;
 	}
 	
+	/**
+	 * check app root dir; create if not exists.
+	 */
+	public static void checkAppRootDir() throws Exception
+	{
+		String rootDirPath = ConstantTable.getAppRootDir();
+		File rootDir = new File(rootDirPath);
+		
+		try
+		{
+			if(rootDir.exists() == false)
+				if (rootDir.mkdir() == false)
+					throw new Exception("Failed to create application directory at " + rootDirPath);
+		}
+		catch (SecurityException e)
+		{
+			throw new Exception(e.getMessage(), e);
+		}
+	}
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        /* check app root dir. */
+        try
+        {
+        	anarxiv.checkAppRootDir();
+        }
+        catch(Exception e)
+        {
+        	UiUtils.showToast(this, e.getMessage());
+        }
         
         /* get resource manager. */
         Resources res = getResources();

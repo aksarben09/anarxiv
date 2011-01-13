@@ -174,7 +174,7 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 			_isLoading = false;
 			
 			/* show error message. */
-			UIUtils.showErrorMessage(PaperListWnd.this, (String)msg.obj);
+			UiUtils.showErrorMessage(PaperListWnd.this, (String)msg.obj);
 		}
 	}
 	

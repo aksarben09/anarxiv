@@ -3,6 +3,8 @@
  */
 package org.anarxiv;
 
+import java.io.File;
+
 import android.os.Environment;
 
 /**
@@ -45,5 +47,21 @@ public class StorageUtils
 	public static String getExternalStorageRoot()
 	{
 		return Environment.getExternalStorageDirectory().getAbsolutePath();
+	}
+	
+	/**
+	 * remove a file
+	 */
+	public static boolean removeFile(String filePath) throws SecurityException
+	{
+		try
+		{
+			File file = new File(filePath);
+			return file.delete();
+		}
+		catch (SecurityException e)
+		{
+			throw e;
+		}
 	}
 }

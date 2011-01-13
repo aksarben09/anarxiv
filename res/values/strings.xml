@@ -13,4 +13,7 @@
 <string name="menu_paperdetail_view">View</string>
 <string name="menu_paperdetail_share">Share</string>
 <string name="error_no_pdf_viewer">No available PDF view found.</string>
+<string name="loading_file_size">Loading file size...</string>
+<string name="loading_file">Loading file...</string>
+<string name="file_deleted">File deleted.</string>
 </resources>

@@ -39,6 +39,7 @@ public class ArxivLoader
 		public String _url;
 		public ArrayList<String> _authors;
 		public ArrayList<String> _category;
+		public int _fileSize;
 	}
 	
 	/**
@@ -108,6 +109,7 @@ public class ArxivLoader
 			paperMap.put("author", author);
 			paperMap.put("authorlist", paper._authors);
 			paperMap.put("url", paper._url);
+//			paperMap.put("filesize", paper._fileSize);
 			
 			mapList.add(paperMap);
 		}
@@ -217,6 +219,7 @@ public class ArxivLoader
 				entry._summary = summary.replace('\n', ' ').replace("  ", "\n  ").substring(1);
 				entry._authors = authors;
 				entry._url = url;
+//				entry._fileSize = ArxivFileDownloader.getFileSize(url);
 				
 				paperList.add(entry);
 			}

@@ -22,6 +22,10 @@
 		<ListView android:id="@+id/paperdetail_authorlist"
 				  android:layout_width="fill_parent"
 				  android:layout_height="wrap_content"/>
+		<TextView android:id="@+id/paperdetail_filesize"
+				  android:layout_width="fill_parent"
+				  android:layout_height="wrap_content"
+				  android:text="File Size: loading..."/>
 		<TextView android:id="@+id/paperdetail_abstract"
 				  android:layout_width="fill_parent"
 				  android:layout_height="wrap_content"

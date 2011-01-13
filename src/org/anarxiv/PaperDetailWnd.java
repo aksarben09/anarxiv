@@ -12,16 +12,12 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 /**
@@ -37,6 +33,22 @@ public class PaperDetailWnd extends Activity
 	private TextView _uiPaperTitle = null;
 	private TextView _uiSummary = null;
 	private TextView _uiPaperDate = null;
+	private TextView _uiFileSize = null;
+	
+	/**
+	 * downloader.
+	 */
+	private ArxivFileDownloader _downloader = new ArxivFileDownloader();
+	
+	/**
+	 * file url.
+	 */
+	private String _fileUrl = null;
+	
+	/**
+	 * local file path.
+	 */
+	private String _localFilePath = null;
 	
 	/**
 	 * util: view pdf file.
@@ -45,7 +57,7 @@ public class PaperDetailWnd extends Activity
 	{
 		if(pdfFile.exists() == false)
 		{
-			UIUtils.showErrorMessage(this, "File does not exist: " + pdfFile.getName());
+			UiUtils.showErrorMessage(this, "File does not exist: " + pdfFile.getName());
 			return;
 		}
 		
@@ -63,9 +75,7 @@ public class PaperDetailWnd extends Activity
 		}
 		catch(ActivityNotFoundException e)
 		{
-			Toast.makeText(this, 
-						   this.getResources().getText(R.string.error_no_pdf_viewer), 
-						   Toast.LENGTH_SHORT).show();
+			throw e;
 		}
 	}
 	
@@ -80,53 +90,72 @@ public class PaperDetailWnd extends Activity
 		@Override
 		public void run()
 		{
-			
+			try
+			{
+				File pdfFile = new File(_localFilePath);
+				
+				/* download when the file does not exist. */
+				if (pdfFile.exists() == false)
+					_downloader.download(_fileUrl, _localFilePath);
+				PaperDetailWnd.this.viewPdf(pdfFile);
+			}
+			catch (ArxivFileDownloader.FileDownloaderException e)
+			{
+				final String errMsg = e.getMessage();
+				
+				PaperDetailWnd.this.runOnUiThread
+					(
+						new Runnable()
+						{
+							public void run()
+							{
+								UiUtils.showErrorMessage(PaperDetailWnd.this, errMsg);
+							}
+						}
+					);
+			}
+			catch (ActivityNotFoundException e)
+			{
+				PaperDetailWnd.this.runOnUiThread
+				(
+					new Runnable()
+					{
+						public void run()
+						{
+							UiUtils.showErrorMessage(PaperDetailWnd.this, "No PDF view available.");
+						}
+					}
+				);
+			}
 		}
 	}
 	
 	/**
-	 * handler for when pdf download finishes.
+	 * thread for getting file size.
 	 */
-	private class PdfHandler extends Handler
+	private class FileSizeLoadingThread extends Thread
 	{
 		/**
 		 * 
 		 */
-		PdfHandler(Looper looper)
-		{
-			super(looper);
-		}
-		
-		/**
-		 * handler.
-		 */
 		@Override
-		public void handleMessage(Message msg)
+		public void run()
 		{
+			/* try to get file size. */
+			final int fileSize = ArxivFileDownloader.getFileSize(_fileUrl);
 			
-		}
-	}
-	
-	/**
-	 * handler for pdf download exception.
-	 */
-	private class PdfDownloadExceptionHandler extends Handler
-	{
-		/**
-		 * 
-		 */
-		PdfDownloadExceptionHandler(Looper looper)
-		{
-			super(looper);
-		}
-		
-		/**
-		 * handler.
-		 */
-		@Override
-		public void handleMessage(Message msg)
-		{
-			
+			PaperDetailWnd.this.runOnUiThread(
+												new Runnable() 
+												{
+													public void run() 
+													{
+														if (fileSize != -1)
+															_uiFileSize.setText("File Size: " + fileSize / 1000 + " KB");
+														else
+															_uiFileSize.setText("File Size: unknown");
+													}
+												}
+											 );
 		}
 	}
 	
@@ -149,11 +178,15 @@ public class PaperDetailWnd extends Activity
 		_uiPaperTitle = (TextView)findViewById(R.id.paperdetail_title);
 		_uiSummary = (TextView)findViewById(R.id.paperdetail_summary);
 		_uiPaperDate = (TextView)findViewById(R.id.paperdetail_date);
+		_uiFileSize = (TextView)findViewById(R.id.paperdetail_filesize);
 		
 		/* set text data. */
 		_uiPaperTitle.setText((String)detail.get("title"));
 		_uiPaperDate.setText((String)detail.get("date"));
 		_uiSummary.setText((String)detail.get("summary"));
+		
+		/* set file url. */
+		_fileUrl = (String)detail.get("url");
 		
 		/* set list data. */
 		@SuppressWarnings("unchecked")
@@ -161,6 +194,14 @@ public class PaperDetailWnd extends Activity
 																R.layout.authorlistitem,
 																(ArrayList<String>)detail.get("authorlist"));
 		_uiAuthorList.setAdapter(adapter);
+		
+		/* setup local file path. */
+		String[] urlParts = _fileUrl.split("/");
+		_localFilePath = ConstantTable.getAppRootDir() + "/" + urlParts[urlParts.length - 1] + ".pdf";
+		
+		/* load file size. */
+		UiUtils.showToast(this, getResources().getString(R.string.loading_file_size));
+		new FileSizeLoadingThread().start();
 	}
 	
 	/**
@@ -184,7 +225,20 @@ public class PaperDetailWnd extends Activity
 	{
 		if (item.getItemId() == R.id.menu_paperdetail_view)
 		{
-			
+			new PdfDownloadingThread().start();
+			UiUtils.showToast(this, getResources().getString(R.string.loading_file));
+		}
+		else if (item.getItemId() == R.id.menu_paperdetail_delete)
+		{
+			try
+			{
+				StorageUtils.removeFile(_localFilePath);
+				UiUtils.showToast(this, getResources().getString(R.string.file_deleted));
+			}
+			catch (Exception e)
+			{
+				
+			}
 		}
 		
 		return super.onOptionsItemSelected(item);
