@@ -74,7 +74,7 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 			{	
 				/* get data. */
 			//	ArrayList<ArxivLoader.Paper> newPaperList = _arxivLoader.loadPapers(_paperCategory);
-				List<Map<String, Object>> paperMapList = arxivLoader.loadPapers(_paperCategory);
+				List<Map<String, Object>> paperMapList = _arxivLoader.loadPapers(_paperCategory);
 				_paperMapList.addAll(paperMapList);
 					
 				/* send message. */
