@@ -1,51 +1,29 @@
-/**
- * 
- */
 package org.anarxiv;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-/**
- * @author lihe
- *
- */
-public class ArxivLoader 
-{
-	/**
-	 * description of an arxiv paper.
-	 */
-	public class Paper
-	{
-		public String _id;
-		public String _date;
-		public String _title;
-		public String _summary;
-		public String _url;
-		public ArrayList<String> _authors;
-		public ArrayList<String> _category;
-		public int _fileSize;
-	}
-	
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+public class ArxivLoader {
 	/**
 	 * loader exception.
 	 */
-	public class LoaderException extends Exception
+	public  class LoaderException extends Exception
 	{
 		public static final long serialVersionUID = 1L;
 		
@@ -73,7 +51,7 @@ public class ArxivLoader
 	/**
 	 * the query url.
 	 */
-	private String _qUrl = null;
+	private  String _qUrl = null;
 	
 	/**
 	 * the query category.
@@ -85,41 +63,7 @@ public class ArxivLoader
 	 */
 	private int _maxResults = 10;
 	
-	/**
-	 * convert a paper list to a map list for SimpleAdapter.
-	 */
-	public static List<Map<String, Object>> toMapList(List<Paper> paperList)
-	{
-		if (paperList == null)
-			return null;
-		
-		/* conver the paper list to a map list. */
-		List<Map<String, Object>> mapList = new ArrayList<Map<String, Object>>();
-		
-		for (Paper paper: paperList)
-		{
-			Map<String, Object> paperMap = new HashMap<String, Object>();
-			
-			/* get the first author from author list. */
-			String author = paper._authors.size() == 1 ? paper._authors.get(0) : paper._authors.get(0) + ", et al";
-			
-			paperMap.put("date", paper._date);
-			paperMap.put("title", paper._title);
-			paperMap.put("summary", paper._summary);
-			paperMap.put("author", author);
-			paperMap.put("authorlist", paper._authors);
-			paperMap.put("url", paper._url);
-//			paperMap.put("filesize", paper._fileSize);
-			
-			mapList.add(paperMap);
-		}
-		
-		return mapList;
-	}
 	
-	/**
-	 * setter for _maxResults.
-	 */
 	public void setMaxResults(int maxResults)
 	{
 		_maxResults = maxResults;
@@ -141,11 +85,7 @@ public class ArxivLoader
 		_qStart = 0;
 		_qCat = null;
 	}
-	
-	/**
-	 * load paper list from specified url.
-	 */
-	public ArrayList<Paper> loadPapers(String category) throws LoaderException
+	public List<Map<String, Object>> loadPapers(String category) throws LoaderException
 	{
 		/* invalid query string. */
 		if(category == null || category.equals(""))
@@ -174,7 +114,7 @@ public class ArxivLoader
 			conn.setReadTimeout(ConstantTable.getPaperListLoadTimeout());
 
 			/* prepare xml parser. */
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			
 			/* get input stream. */
@@ -185,7 +125,7 @@ public class ArxivLoader
 			NodeList entryList = doc.getElementsByTagName("entry");
 			
 			/* allocate paper list. */
-			ArrayList<Paper> paperList = new ArrayList<Paper>();
+			List<Map<String, Object>> paperList = new ArrayList<Map<String, Object>>();
 			
 			/* extract paper info. */
 			for(int i = 0; i < entryList.getLength(); i ++)
@@ -212,16 +152,29 @@ public class ArxivLoader
 				String url = ((Element)node.getElementsByTagName("link").item(1)).getAttribute("href");
 				
 				/* fill in paper structure. */
-				Paper entry = new Paper();
-				entry._id = id;
-				entry._date = date.replace('T',	' ').replace('Z', ' ');
-				entry._title = title.replace("\n ", " ");
-				entry._summary = summary.replace('\n', ' ').replace("  ", "\n  ").substring(1);
-				entry._authors = authors;
-				entry._url = url;
+				//Paper entry = new Paper();
+				Map<String, Object> paperMap = new HashMap<String, Object>();
+//				entry._id = id;
+//				entry._date = date.replace('T',	' ').replace('Z', ' ');
+//				entry._title = title.replace("\n ", " ");
+//				entry._summary = summary.replace('\n', ' ').replace("  ", "\n  ").substring(1);
+//				entry._authors = authors;
+//				entry._url = url;
 //				entry._fileSize = ArxivFileDownloader.getFileSize(url);
 				
-				paperList.add(entry);
+				//paperList.add(entry);
+				String author = authors.size() == 1 ? authors.get(0) : authors.get(0) + ", et al";
+				
+				paperMap.put("date", date.replace('T',	' ').replace('Z', ' '));
+				paperMap.put("title", title.replace("\n ", " "));
+				paperMap.put("summary", summary.replace('\n', ' ').replace("  ", "\n  ").substring(1));
+				paperMap.put("author", author);
+				paperMap.put("authorlist", authors);
+				paperMap.put("url", url);
+				paperMap.put("id", id);
+//				paperMap.put("filesize", paper._fileSize);
+				
+				paperList.add(paperMap);
 			}
 			
 			/* increase starting point. */
@@ -250,4 +203,5 @@ public class ArxivLoader
 			throw new LoaderException(e.getMessage());
 		}
 	}
+
 }
