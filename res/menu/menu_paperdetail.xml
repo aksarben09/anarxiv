@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:id="@+id/menu_paperdetail_view" 
 		  android:title="@string/menu_paperdetail_view"/>
-	<item android:title="Delete Downloaded File" 
-		  android:id="@+id/menu_paperdetail_delete"/>
+	<item android:id="@+id/menu_paperdetail_delete"
+		  android:title="Delete"/>
 	<item android:id="@+id/menu_paperdetail_share" 
 		  android:title="@string/menu_paperdetail_share"/>
 </menu>
