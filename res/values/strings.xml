@@ -16,4 +16,7 @@
 <string name="loading_file_size">Loading file size...</string>
 <string name="loading_file">Loading file...</string>
 <string name="file_deleted">File deleted.</string>
+<string name="tabid_Category">category</string>
+<string name="tabid_Recent">recent</string>
+<string name="tabid_Favorite">fav</string>
 </resources>

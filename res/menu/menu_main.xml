@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/mainmenu_recent_category"
+		  android:title="Category"/>
+	<item android:id="@+id/mainmenu_recent_paper"
+		  android:title="Paper"/>
+	
+	<item android:id="@+id/mainmenu_fav_category"
+		  android:title="Category"/>
+	<item android:id="@+id/mainmenu_fav_paper"
+		  android:title="Paper"/>
+</menu>
