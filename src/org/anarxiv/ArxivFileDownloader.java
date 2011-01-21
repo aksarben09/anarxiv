@@ -21,7 +21,7 @@ public class ArxivFileDownloader
 	/**
 	 * exception.
 	 */
-	public class FileDownloaderException extends Exception
+	public static class FileDownloaderException extends Exception
 	{
 		/**
 		 * 

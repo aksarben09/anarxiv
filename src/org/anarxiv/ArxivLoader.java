@@ -23,7 +23,7 @@ public class ArxivLoader {
 	/**
 	 * loader exception.
 	 */
-	public  class LoaderException extends Exception
+	public static class LoaderException extends Exception
 	{
 		public static final long serialVersionUID = 1L;
 		
