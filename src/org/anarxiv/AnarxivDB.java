@@ -9,6 +9,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteException;
 
 /**
  * @author lihe
@@ -24,10 +25,8 @@ public class AnarxivDB
 		public String _id;
 		public String _date;
 		public String _title;
-		public String _summary;
 		public String _author;
 		public String _url;
-		public ArrayList<String> _authorlist;
 	}
 	
 	/**
@@ -69,10 +68,40 @@ public class AnarxivDB
 	 * database version.
 	 */
 	private static final int _databaseVersion = 2;
+	
 	/**
 	 * database name.
 	 */
 	private static final String _databasePath = "anarxivdb";
+	
+	/**
+	 * table names.
+	 */
+	private static final String _tbl_RecentPaper = "recent_paper";
+	private static final String _tbl_FavoritePaper = "favorite_paper";
+	
+	/**
+	 * table creation statements.
+	 */
+	private static final String _createTbl_RecentPaper = 
+							"create table if not exists" + AnarxivDB._tbl_RecentPaper + 
+							"(db_id integer primary key autoincrement," +
+							"_id text," +
+							"_title text," +
+							"_author text," +
+							"_url text;)";
+	private static final String _createTbl_FavoritePaper = 
+							"create table if not exists" + AnarxivDB._tbl_FavoritePaper + 
+							"(db_id integer primary key autoincrement," +
+							"_id text," +
+							"_title text," +
+							"_author text," +
+							"_url text;)";
+	
+	/**
+	 * the sqlite database object.
+	 */
+	private SQLiteDatabase _sqliteDB = null;
 	
 	/**
 	 * singleton instance.
@@ -100,17 +129,26 @@ public class AnarxivDB
 	/**
 	 * util: data converter.
 	 */
-	private ContentValues paperToContentValues(Paper paper)
+	public static ContentValues paperToContentValues(Paper paper)
 	{
-		return null;
+		ContentValues cv = new ContentValues();
+		cv.put("_id", paper._id);
+		cv.put("_date", paper._date);
+		cv.put("_title", paper._title);
+		cv.put("_url", paper._url);
+		cv.put("_author", paper._author);
+		return cv;
 	}
 	
 	/**
 	 * util: data converter.
 	 */
-	private ContentValues categoryTpContentValues(Category category)
+	public static ContentValues categoryTpContentValues(Category category)
 	{
-		return null;
+		ContentValues cv = new ContentValues();
+		cv.put("_name", category._name);
+		cv.put("_queryword", category._queryWord);
+		return cv;
 	}
 	
 	/**
@@ -118,39 +156,76 @@ public class AnarxivDB
 	 */
 	public void open() throws DBException
 	{
-		
+		try
+		{
+			if (_sqliteDB == null)
+			{
+				/* open database. */
+				_sqliteDB = SQLiteDatabase.openOrCreateDatabase(AnarxivDB._databasePath, null);
+				
+				/* create tables. */
+				_sqliteDB.execSQL(AnarxivDB._createTbl_RecentPaper);
+				_sqliteDB.execSQL(AnarxivDB._createTbl_FavoritePaper);
+			}
+		}
+		catch (SQLiteException e)
+		{
+			throw new DBException(e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * close the database.
+	 */
+	public void close()
+	{
+		_sqliteDB.close();
 	}
 
 	/**
 	 * insert a recent paper.
 	 */
-	public void addRecentPaper(Paper paper) throws DBException
+	public long addRecentPaper(Paper paper) throws DBException
 	{
-		
+		try
+		{
+			return _sqliteDB.insert(AnarxivDB._tbl_RecentPaper, null, AnarxivDB.paperToContentValues(paper));
+		}
+		catch (SQLiteException e)
+		{
+			throw new DBException(e.getMessage(), e);
+		}
 	}
 	
 	/**
 	 * insert a recent category.
 	 */
-	public void addRecentCategory(Category category) throws DBException
+	public long addRecentCategory(Category category) throws DBException
 	{
-		
+		return 0;
 	}
 	
 	/**
 	 * insert a favorite paper.
 	 */
-	public void addFavoritePaper(Paper paper) throws DBException
+	public long addFavoritePaper(Paper paper) throws DBException
 	{
-		
+		try
+		{
+			return _sqliteDB.insert(AnarxivDB._tbl_FavoritePaper, null, AnarxivDB.paperToContentValues(paper));
+		}
+		catch (SQLiteException e)
+		{
+			throw new DBException(e.getMessage(), e);
+		}
 	}
 	
 	/**
 	 * insert a favorite category.
 	 */
-	public void addFavoriteCategory(Category category) throws DBException
+	public long addFavoriteCategory(Category category) throws DBException
 	{
-		
+		return 0;
 	}
 	
 	/**
