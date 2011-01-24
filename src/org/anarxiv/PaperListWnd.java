@@ -223,6 +223,25 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 		@SuppressWarnings("unchecked")
 		HashMap<String, Object> item = (HashMap<String, Object>)a.getItemAtPosition(position);
 		
+		try
+		{
+			AnarxivDB db = AnarxivDB.getInstance();
+			
+			/* fill out the paper object and add to database. */
+			AnarxivDB.Paper paper = new AnarxivDB.Paper();
+			paper._author = (String)item.get("author");
+			paper._date = (String)item.get("date");
+			paper._id = (String)item.get("id");
+			paper._title = (String)item.get("title");
+			paper._url = (String)item.get("url");
+			
+			db.addRecentPaper(paper);
+		}
+		catch (AnarxivDB.DBException e)
+		{
+			UiUtils.showToast(this, e.getMessage());
+		}
+		
 		Intent intent = new Intent(this, PaperDetailWnd.class);
 		intent.putExtra("paperdetail", item);
 		startActivity(intent);

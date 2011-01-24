@@ -1,6 +1,9 @@
 package org.anarxiv;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,12 +15,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TabHost;
 import android.widget.AdapterView;
 
 public class anarxiv extends Activity implements AdapterView.OnItemClickListener, TabHost.OnTabChangeListener
 {
-	/* UI components. */
+	/** UI components. */
 	private TabHost _tabHost = null;
 	
 	private ListView _uiCategoryList = null;
@@ -70,14 +74,18 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
     	super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
     	
-		/* check app root dir. */
 		try
 		{
+			/* check app root dir. */
 			anarxiv.checkAppRootDir();
+			
+			/* open the database. */
+			AnarxivDB.setOwner(this);
+			AnarxivDB.getInstance().open();
 		}
 		catch(Exception e)
 		{
-			UiUtils.showToast(this, e.getMessage());
+			UiUtils.showErrorMessage(this, e.getMessage());
 		}
     	
 		/* get resource manager. */
@@ -154,6 +162,33 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 	{
 		// TODO Auto-generated method stub
 		_currentTabId = tabId;
+		
+		/* tab recent is clicked. */
+		if (getResources().getString(R.string.tabid_Recent).equals(_currentTabId))
+		{
+			try
+			{
+				/* display recently access paper. */
+				AnarxivDB db = AnarxivDB.getInstance();
+				List<HashMap<String, Object>> recentPaperList = AnarxivDB.paperListToMapList(db.getRecentPapers(-1));
+				
+				/* adapter. */
+				SimpleAdapter adapter = new SimpleAdapter(this,
+														  recentPaperList,
+														  R.layout.paperlistitem,
+														  new String[] {"title",
+																		"date",
+																		"author"},
+														  new int[] {R.id.paperitem_title, 
+																	 R.id.paperitem_date, 
+																	 R.id.paperitem_author});
+				this._uiRecentList.setAdapter(adapter);
+			}
+			catch (AnarxivDB.DBException e)
+			{
+				UiUtils.showToast(this, e.getMessage());
+			}
+		}
 	}
 	
 	/**

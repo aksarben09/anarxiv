@@ -4,9 +4,12 @@
 package org.anarxiv;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteException;
@@ -84,19 +87,21 @@ public class AnarxivDB
 	 * table creation statements.
 	 */
 	private static final String _createTbl_RecentPaper = 
-							"create table if not exists" + AnarxivDB._tbl_RecentPaper + 
-							"(db_id integer primary key autoincrement," +
-							"_id text," +
-							"_title text," +
-							"_author text," +
-							"_url text;)";
+							"create table if not exists " + AnarxivDB._tbl_RecentPaper + 
+							"(db_id integer primary key autoincrement, " +
+							"_date text, " +
+							"_id text, " +
+							"_title text, " +
+							"_author text, " +
+							"_url text)";
 	private static final String _createTbl_FavoritePaper = 
-							"create table if not exists" + AnarxivDB._tbl_FavoritePaper + 
-							"(db_id integer primary key autoincrement," +
-							"_id text," +
-							"_title text," +
-							"_author text," +
-							"_url text;)";
+							"create table if not exists " + AnarxivDB._tbl_FavoritePaper + 
+							"(db_id integer primary key autoincrement, " +
+							"_date text, " +
+							"_id text, " +
+							"_title text, " +
+							"_author text, " +
+							"_url text)";
 	
 	/**
 	 * the sqlite database object.
@@ -109,6 +114,11 @@ public class AnarxivDB
 	private static AnarxivDB _theInstance = null;
 	
 	/**
+	 * context.
+	 */
+	private static Context _context = null;
+	
+	/**
 	 * get the instance.
 	 */
 	public static AnarxivDB getInstance()
@@ -116,6 +126,14 @@ public class AnarxivDB
 		if (AnarxivDB._theInstance == null)
 			_theInstance = new AnarxivDB();
 		return AnarxivDB._theInstance;
+	}
+	
+	/**
+	 * set owner context. must be set before use.
+	 */
+	public static void setOwner(Context context)
+	{
+		AnarxivDB._context = context;
 	}
 
 	/**
@@ -143,6 +161,28 @@ public class AnarxivDB
 	/**
 	 * util: data converter.
 	 */
+	public static List<HashMap<String, Object>> paperListToMapList(List<Paper> paperList)
+	{
+		List<HashMap<String, Object>> mapList = new ArrayList<HashMap<String, Object>>();
+		
+		for (Paper paper: paperList)
+		{
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("author", paper._author);
+			map.put("date", paper._date);
+			map.put("id", paper._id);
+			map.put("title", paper._title);
+			map.put("url", paper._url);
+			
+			mapList.add(map);
+		}
+		
+		return mapList;
+	}
+	
+	/**
+	 * util: data converter.
+	 */
 	public static ContentValues categoryTpContentValues(Category category)
 	{
 		ContentValues cv = new ContentValues();
@@ -161,7 +201,9 @@ public class AnarxivDB
 			if (_sqliteDB == null)
 			{
 				/* open database. */
-				_sqliteDB = SQLiteDatabase.openOrCreateDatabase(AnarxivDB._databasePath, null);
+				_sqliteDB = _context.openOrCreateDatabase(AnarxivDB._databasePath, 
+														  Context.MODE_WORLD_WRITEABLE,
+														  null);
 				
 				/* create tables. */
 				_sqliteDB.execSQL(AnarxivDB._createTbl_RecentPaper);
@@ -239,9 +281,42 @@ public class AnarxivDB
 	/**
 	 * get most recent papers.
 	 */
-	public ArrayList<Paper> getRecentPapers() throws DBException
+	public ArrayList<Paper> getRecentPapers(Integer limit) throws DBException
 	{
-		return null;
+		try
+		{
+			/* query the database. */
+			Cursor c = _sqliteDB.query(AnarxivDB._tbl_RecentPaper, 
+									   new String[] {"_id", "_author", "_title", "_date", "_url"}, 
+									   null, 
+									   null, 
+									   null, 
+									   null, 
+									   "db_id desc",
+									   limit < 0 ? null : limit.toString());
+			c.moveToFirst();
+			
+			ArrayList<Paper> paperList = new ArrayList<Paper>();
+			
+			for (int i = 0; i < c.getCount(); i ++)
+			{
+				Paper paper = new Paper();
+				paper._author = c.getString(c.getColumnIndex("_author"));
+				paper._date = c.getString(c.getColumnIndex("_date"));
+				paper._id = c.getString(c.getColumnIndex("_id"));
+				paper._title = c.getString(c.getColumnIndex("_title"));
+				paper._url = c.getString(c.getColumnIndex("_url"));
+				
+				paperList.add(paper);
+				c.moveToNext();
+			}
+			
+			return paperList;
+		}
+		catch (SQLiteException e)
+		{
+			throw new DBException(e.getMessage(), e);
+		}
 	}
 	
 	/**
