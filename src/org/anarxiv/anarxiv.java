@@ -166,28 +166,7 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		/* tab recent is clicked. */
 		if (getResources().getString(R.string.tabid_Recent).equals(_currentTabId))
 		{
-			try
-			{
-				/* display recently access paper. */
-				AnarxivDB db = AnarxivDB.getInstance();
-				List<HashMap<String, Object>> recentPaperList = AnarxivDB.paperListToMapList(db.getRecentPapers(-1));
-				
-				/* adapter. */
-				SimpleAdapter adapter = new SimpleAdapter(this,
-														  recentPaperList,
-														  R.layout.paperlistitem,
-														  new String[] {"title",
-																		"date",
-																		"author"},
-														  new int[] {R.id.paperitem_title, 
-																	 R.id.paperitem_date, 
-																	 R.id.paperitem_author});
-				this._uiRecentList.setAdapter(adapter);
-			}
-			catch (AnarxivDB.DBException e)
-			{
-				UiUtils.showToast(this, e.getMessage());
-			}
+			loadRecentPapers();
 		}
 	}
 	
@@ -240,7 +219,78 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
+		/* recent paper. */
+		if (item.getItemId() == R.id.mainmenu_recent_paper)
+		{
+			loadRecentPapers();
+		}
+		/* remove all recent paper. */
+		else if (item.getItemId() == R.id.mainmenu_recent_delete_papers)
+		{
+			removeAllRecentPapers();
+			loadRecentPapers();
+		}
+		/* recent category. */
+		else if (item.getItemId() == R.id.mainmenu_recent_category)
+		{
+			
+		}
+		/* recent category. */
+		else if (item.getItemId() == R.id.mainmenu_recent_category)
+		{
+			
+		}
+		/* remove all recent categories. */
+		else if (item.getItemId() == R.id.mainmenu_recent_delete_categories)
+		{
+			
+		}
+		
 		return super.onOptionsItemSelected(item);
+	}
+	
+	/**
+	 * load recent paeprs from database.
+	 */
+	private void loadRecentPapers()
+	{
+		try
+		{
+			/* display recently access paper. */
+			AnarxivDB db = AnarxivDB.getInstance();
+			List<HashMap<String, Object>> recentPaperList = AnarxivDB.paperListToMapList(db.getRecentPapers(-1));
+			
+			/* adapter. */
+			SimpleAdapter adapter = new SimpleAdapter(this,
+													  recentPaperList,
+													  R.layout.paperlistitem,
+													  new String[] {"title",
+																	"date",
+																	"author"},
+													  new int[] {R.id.paperitem_title, 
+																 R.id.paperitem_date, 
+																 R.id.paperitem_author});
+			this._uiRecentList.setAdapter(adapter);
+		}
+		catch (AnarxivDB.DBException e)
+		{
+			UiUtils.showToast(this, e.getMessage());
+		}
+	}
+	
+	/**
+	 * remove all recent papers.
+	 */
+	private void removeAllRecentPapers()
+	{
+		try
+		{
+			AnarxivDB.getInstance().removeAllRecentPapers();
+		}
+		catch (AnarxivDB.DBException e)
+		{
+			UiUtils.showToast(this, e.getMessage());
+		}
 	}
 	
 	/**
@@ -259,6 +309,10 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		MenuItem item = menu.findItem(R.id.mainmenu_recent_category);
 		item.setVisible(visible);
 		item = menu.findItem(R.id.mainmenu_recent_paper);
+		item.setVisible(visible);
+		item = menu.findItem(R.id.mainmenu_recent_delete_categories);
+		item.setVisible(visible);
+		item = menu.findItem(R.id.mainmenu_recent_delete_papers);
 		item.setVisible(visible);
 	}
 	

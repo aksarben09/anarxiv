@@ -11,7 +11,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteException;
 
 /**
@@ -66,11 +65,6 @@ public class AnarxivDB
 			super(msg, e);
 		}
 	}
-	
-	/**
-	 * database version.
-	 */
-	private static final int _databaseVersion = 2;
 	
 	/**
 	 * database name.
@@ -240,6 +234,21 @@ public class AnarxivDB
 	}
 	
 	/**
+	 * remove all recent papers.
+	 */
+	public int removeAllRecentPapers() throws DBException
+	{
+		try
+		{
+			return _sqliteDB.delete(AnarxivDB._tbl_RecentPaper, null, null);
+		}
+		catch (SQLiteException e)
+		{
+			throw new DBException(e.getMessage(), e);
+		}
+	}
+	
+	/**
 	 * insert a recent category.
 	 */
 	public long addRecentCategory(Category category) throws DBException
@@ -255,6 +264,21 @@ public class AnarxivDB
 		try
 		{
 			return _sqliteDB.insert(AnarxivDB._tbl_FavoritePaper, null, AnarxivDB.paperToContentValues(paper));
+		}
+		catch (SQLiteException e)
+		{
+			throw new DBException(e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * remove all favorite papers.
+	 */
+	public int removeAllFavoritePapers() throws DBException
+	{
+		try
+		{
+			return _sqliteDB.delete(AnarxivDB._tbl_FavoritePaper, null, null);
 		}
 		catch (SQLiteException e)
 		{
