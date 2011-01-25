@@ -166,7 +166,12 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		/* tab recent is clicked. */
 		if (getResources().getString(R.string.tabid_Recent).equals(_currentTabId))
 		{
-			loadRecentPapers();
+			if (this._uiRecentList.getAdapter() == null)
+				loadRecentPapers();
+		}
+		else if (getResources().getString(R.string.tabid_Favorite).equals(_currentTabId))
+		{
+			
 		}
 	}
 	
@@ -283,8 +288,8 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 			SimpleAdapter adapter = new SimpleAdapter(this,
 													  recentCategoryList,
 													  R.layout.recent_category_list_item,
-													  new String[] {"name"},
-													  new int[] {R.id.recent_category_list_name});
+													  new String[] {"name", "parent"},
+													  new int[] {R.id.recent_category_list_name, R.id.recent_category_list_parent});
 			this._uiRecentList.setAdapter(adapter);
 		}
 		catch (AnarxivDB.DBException e)

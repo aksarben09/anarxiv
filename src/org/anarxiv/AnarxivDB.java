@@ -3,7 +3,6 @@
  */
 package org.anarxiv;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +37,7 @@ public class AnarxivDB
 	public static class Category
 	{
 		public String _name;
+		public String _parent;
 		public String _queryWord;
 	}
 	
@@ -103,11 +103,13 @@ public class AnarxivDB
 							"create table if not exists " + AnarxivDB._tbl_RecentCategory +
 							"(db_id integer primary key autoincrement, " +
 							"_name text, " +
+							"_parent text, " +
 							"_queryword text)";
 	private static final String _createTbl_FavoriteCategory =
 							"create table if not exists " + AnarxivDB._tbl_FavoriteCategory +
 							"(db_id integer primary key autoincrement, " +
 							"_name text, " +
+							"_parent text, " +
 							"_queryword text)";
 	
 	/**
@@ -192,7 +194,7 @@ public class AnarxivDB
 	{
 		/* query the database. */
 		Cursor c = _sqliteDB.query(table, 
-								   new String[] {"_name", "_queryword"}, 
+								   new String[] {"_name", "_parent", "_queryword"}, 
 								   null, 
 								   null, 
 								   null, 
@@ -207,6 +209,7 @@ public class AnarxivDB
 		{
 			Category category = new Category();
 			category._name = c.getString(c.getColumnIndex("_name"));
+			category._parent = c.getString(c.getColumnIndex("_parent"));
 			category._queryWord = c.getString(c.getColumnIndex("_queryword"));
 			
 			categoryList.add(category);
@@ -263,6 +266,7 @@ public class AnarxivDB
 		{
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("name", category._name);
+			map.put("parent", category._parent);
 			map.put("queryword", category._queryWord);
 			
 			mapList.add(map);
@@ -278,6 +282,7 @@ public class AnarxivDB
 	{
 		ContentValues cv = new ContentValues();
 		cv.put("_name", category._name);
+		cv.put("_parent", category._parent);
 		cv.put("_queryword", category._queryWord);
 		return cv;
 	}
@@ -354,6 +359,7 @@ public class AnarxivDB
 	{
 		try
 		{
+			_sqliteDB.delete(AnarxivDB._tbl_RecentCategory, "_name = '" + category._name + "' and _parent = '" + category._parent +"'", null);
 			return _sqliteDB.insert(AnarxivDB._tbl_RecentCategory, null, AnarxivDB.categoryToContentValues(category));
 		}
 		catch (SQLiteException e)

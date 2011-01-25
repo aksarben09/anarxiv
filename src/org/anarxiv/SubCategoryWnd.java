@@ -3,12 +3,17 @@ package org.anarxiv;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 
 
 /**
@@ -30,7 +35,9 @@ public class SubCategoryWnd extends Activity implements OnItemClickListener
 	/** arxiv loader. */
 //	private ArxivLoader _arxivLoader = anarxiv.getArxivLoaderInstance();
 
-	/** Called when the activity is first created. */
+	/** 
+	 * Called when the activity is first created.
+	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -55,9 +62,14 @@ public class SubCategoryWnd extends Activity implements OnItemClickListener
 		
 		/* event listener. */
 		_uiSubCatList.setOnItemClickListener(this);
+		
+		/* register context menu. */
+		registerForContextMenu(_uiSubCatList);
 	}
 	
-	/** handler: onItemClick. */
+	/** 
+	 * handler: onItemClick. 
+	 */
 	public void onItemClick(AdapterView<?> a, View v, int position, long id) 
 	{
 		// TODO Auto-generated method stub
@@ -71,12 +83,13 @@ public class SubCategoryWnd extends Activity implements OnItemClickListener
 			{
 				AnarxivDB.Category category = new AnarxivDB.Category();
 				category._name = catName;
+				category._parent = _subCatName;
 				category._queryWord = qstring;
 				AnarxivDB.getInstance().addRecentCategory(category);
 			}
 			catch (AnarxivDB.DBException e)
 			{
-				UiUtils.showToast(this, e.getMessage());
+				UiUtils.showErrorMessage(this, e.getMessage());
 			}
 			
 			/* start new activity. */
@@ -85,5 +98,25 @@ public class SubCategoryWnd extends Activity implements OnItemClickListener
 			intent.putExtra("categoryname", catName);
 			startActivity(intent);
 		}
+	}
+	
+	/**
+	 * override: context menu.
+	 */
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
+	{
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.ctxmenu_add_to_favorite, menu);
+		menu.setHeaderTitle("Add to Favorite");
+	}
+	
+	/**
+	 * override: context menu handler.
+	 */
+	public boolean onContextItemSelected(MenuItem item)
+	{
+		return super.onContextItemSelected(item);
 	}
 }
