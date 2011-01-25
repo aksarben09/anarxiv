@@ -207,7 +207,7 @@ public class AnarxivDB
 		{
 			Category category = new Category();
 			category._name = c.getString(c.getColumnIndex("_name"));
-			category._queryWord = c.getString(c.getColumnIndex("_queryname"));
+			category._queryWord = c.getString(c.getColumnIndex("_queryword"));
 			
 			categoryList.add(category);
 			c.moveToNext();
@@ -263,7 +263,7 @@ public class AnarxivDB
 		{
 			HashMap<String, Object> map = new HashMap<String, Object>();
 			map.put("name", category._name);
-			map.put("_queryname", category._queryWord);
+			map.put("queryword", category._queryWord);
 			
 			mapList.add(map);
 		}
@@ -369,7 +369,7 @@ public class AnarxivDB
 	{
 		try
 		{
-			return _sqliteDB.delete(AnarxivDB._createTbl_RecentCategory, null, null);
+			return _sqliteDB.delete(AnarxivDB._tbl_RecentCategory, null, null);
 		}
 		catch (SQLiteException e)
 		{

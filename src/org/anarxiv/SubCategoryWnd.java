@@ -66,6 +66,20 @@ public class SubCategoryWnd extends Activity implements OnItemClickListener
 			String catName = (String)a.getItemAtPosition(position);
 			String qstring = anarxiv._urlTbl.getQueryString(catName);
 			
+			/* add to recent category table. */
+			try
+			{
+				AnarxivDB.Category category = new AnarxivDB.Category();
+				category._name = catName;
+				category._queryWord = qstring;
+				AnarxivDB.getInstance().addRecentCategory(category);
+			}
+			catch (AnarxivDB.DBException e)
+			{
+				UiUtils.showToast(this, e.getMessage());
+			}
+			
+			/* start new activity. */
 			Intent intent = new Intent(this, PaperListWnd.class);
 			intent.putExtra("category", qstring);
 			intent.putExtra("categoryname", catName);

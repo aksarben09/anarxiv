@@ -224,26 +224,17 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		{
 			loadRecentPapers();
 		}
-		/* remove all recent paper. */
-		else if (item.getItemId() == R.id.mainmenu_recent_delete_papers)
+		/* remove all recent history. */
+		else if (item.getItemId() == R.id.mainmenu_recent_delete_all)
 		{
 			removeAllRecentPapers();
+			removeAllRecentCategories();
 			loadRecentPapers();
 		}
 		/* recent category. */
 		else if (item.getItemId() == R.id.mainmenu_recent_category)
 		{
-			
-		}
-		/* recent category. */
-		else if (item.getItemId() == R.id.mainmenu_recent_category)
-		{
-			
-		}
-		/* remove all recent categories. */
-		else if (item.getItemId() == R.id.mainmenu_recent_delete_categories)
-		{
-			
+			loadRecentCategories();
 		}
 		
 		return super.onOptionsItemSelected(item);
@@ -279,6 +270,30 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 	}
 	
 	/**
+	 * load recent categories.
+	 */
+	private void loadRecentCategories()
+	{
+		try
+		{
+			AnarxivDB db = AnarxivDB.getInstance();
+			List<HashMap<String, Object>> recentCategoryList = AnarxivDB.categoryListToMapList(db.getRecentCategories());
+			
+			/* adapter. */
+			SimpleAdapter adapter = new SimpleAdapter(this,
+													  recentCategoryList,
+													  R.layout.recent_category_list_item,
+													  new String[] {"name"},
+													  new int[] {R.id.recent_category_list_name});
+			this._uiRecentList.setAdapter(adapter);
+		}
+		catch (AnarxivDB.DBException e)
+		{
+			UiUtils.showToast(this, e.getMessage());
+		}
+	}
+	
+	/**
 	 * remove all recent papers.
 	 */
 	private void removeAllRecentPapers()
@@ -286,6 +301,21 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		try
 		{
 			AnarxivDB.getInstance().removeAllRecentPapers();
+		}
+		catch (AnarxivDB.DBException e)
+		{
+			UiUtils.showToast(this, e.getMessage());
+		}
+	}
+	
+	/**
+	 * remove all recent categories.
+	 */
+	private void removeAllRecentCategories()
+	{
+		try
+		{
+			AnarxivDB.getInstance().removeAllRecentCategories();
 		}
 		catch (AnarxivDB.DBException e)
 		{
@@ -310,9 +340,7 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		item.setVisible(visible);
 		item = menu.findItem(R.id.mainmenu_recent_paper);
 		item.setVisible(visible);
-		item = menu.findItem(R.id.mainmenu_recent_delete_categories);
-		item.setVisible(visible);
-		item = menu.findItem(R.id.mainmenu_recent_delete_papers);
+		item = menu.findItem(R.id.mainmenu_recent_delete_all);
 		item.setVisible(visible);
 	}
 	
