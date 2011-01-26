@@ -399,13 +399,25 @@ public class AnarxivDB
 	}
 	
 	/**
-	 * remove all favorite papers.
+	 * remove favorite paper.
 	 */
-	public int removeAllFavoritePapers() throws DBException
+	public int removeFavoritePaper(Paper paper) throws DBException
 	{
 		try
 		{
-			return _sqliteDB.delete(AnarxivDB._tbl_FavoritePaper, null, null);
+			if (paper == null)
+				return _sqliteDB.delete(AnarxivDB._tbl_FavoritePaper, null, null);
+			else
+			{
+				String where = "_author = '" + paper._author + 
+							   "' and _date = '" + paper._date + 
+							   "' and _id = '" + paper._id +
+							   "' and _title = '" + paper._title + 
+							   "' and _url = '" + paper._url + "'";
+				return _sqliteDB.delete(AnarxivDB._tbl_FavoritePaper,
+										where, 
+										null);
+			}
 		}
 		catch (SQLiteException e)
 		{
@@ -421,6 +433,31 @@ public class AnarxivDB
 		try
 		{
 			return _sqliteDB.insert(AnarxivDB._tbl_FavoriteCategory, null, AnarxivDB.categoryToContentValues(category));
+		}
+		catch (SQLiteException e)
+		{
+			throw new DBException(e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * remove favorite category.
+	 */
+	public int removeFavoriteCategory(Category category) throws DBException
+	{
+		try
+		{
+			if (category == null)
+				return _sqliteDB.delete(AnarxivDB._tbl_FavoriteCategory, null, null);
+			else
+			{
+				String where = "_name = '" + category._name + 
+							   "' and _parent = '" + category._parent + 
+							   "' and _queryword = '" + category._queryWord + "'";
+				return _sqliteDB.delete(AnarxivDB._tbl_FavoriteCategory, 
+										where, 
+										null);
+			}
 		}
 		catch (SQLiteException e)
 		{

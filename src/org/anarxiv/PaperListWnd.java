@@ -4,9 +4,9 @@
 package org.anarxiv;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -15,10 +15,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -206,6 +211,9 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 		_uiPaperList.setOnItemClickListener(this);
 		_uiPaperList.setOnScrollListener(this);
 		
+		/* register context menu. */
+		registerForContextMenu(_uiPaperList);
+		
 		/* show busy box. */
 		_uiBusyBox = ProgressDialog.show(this, "",
 										 getResources().getText(R.string.loading_please_wait));
@@ -287,5 +295,50 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 	{
 		// TODO Auto-generated method stub
 		
+	}
+	
+	/**
+	 * override: context menu.
+	 */
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
+	{
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.ctxmenu_add_to_favorite, menu);
+		menu.setHeaderTitle("Add to Favorite");
+	}
+	
+	/**
+	 * override: context menu handler.
+	 */
+	@Override
+	public boolean onContextItemSelected(MenuItem item)
+	{
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
+		
+		if (item.getItemId() == R.id.ctxmenu_add_to_favorite)
+		{
+			HashMap<String, Object> itemData = (HashMap<String, Object>)_uiPaperList.getItemAtPosition(info.position);
+			
+			AnarxivDB.Paper paper = new AnarxivDB.Paper();
+			paper._author = (String)itemData.get("author");
+			paper._date = (String)itemData.get("date");
+			paper._id = (String)itemData.get("id");
+			paper._title = (String)itemData.get("title");
+			paper._url = (String)itemData.get("url");
+			
+			try
+			{
+				AnarxivDB.getInstance().addFavoritePaper(paper);
+				UiUtils.showToast(this, "Added to favorite: " + paper._title);
+			}
+			catch (AnarxivDB.DBException e)
+			{
+				UiUtils.showToast(this, e.getMessage());
+			}
+		}
+		
+		return super.onContextItemSelected(item);
 	}
 }

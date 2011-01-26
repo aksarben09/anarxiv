@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -117,6 +118,33 @@ public class SubCategoryWnd extends Activity implements OnItemClickListener
 	 */
 	public boolean onContextItemSelected(MenuItem item)
 	{
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
+		
+		/* add the favorite. */
+		if (item.getItemId() == R.id.ctxmenu_add_to_favorite)
+		{
+			/* retrieve names. */
+			String catName = (String)_uiSubCatList.getItemAtPosition(info.position);
+			String parent = _subCatName;
+			
+			/* fill in category info. */
+			AnarxivDB.Category category = new AnarxivDB.Category();
+			category._name = catName;
+			category._parent = parent;
+			category._queryWord = anarxiv._urlTbl.getQueryString(catName);
+			
+			/* add to db. */
+			try
+			{
+				AnarxivDB.getInstance().addFavoriteCategory(category);
+				UiUtils.showToast(this, "Added to favorite: " + catName);
+			}
+			catch (AnarxivDB.DBException e)
+			{
+				UiUtils.showToast(this, e.getMessage());
+			}
+		}
+		
 		return super.onContextItemSelected(item);
 	}
 }

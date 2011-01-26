@@ -7,8 +7,10 @@
 	<item android:id="@+id/mainmenu_recent_delete_all"
 		  android:title="Delete All"/>
 	
-	<item android:id="@+id/mainmenu_fav_category"
+	<item android:id="@+id/mainmenu_favorite_category"
 		  android:title="Category"/>
-	<item android:id="@+id/mainmenu_fav_paper"
+	<item android:id="@+id/mainmenu_favorite_paper"
 		  android:title="Paper"/>
+	<item android:id="@+id/mainmenu_favorite_delete_all"
+		  android:title="Delete All"/>
 </menu>
