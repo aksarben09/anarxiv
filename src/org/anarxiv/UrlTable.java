@@ -316,4 +316,13 @@ public class UrlTable
 					 "&max_results=" + maxResults;
 		return url;
 	}
+	
+	/**
+	 * make id query url.
+	 */
+	public static String makeQueryByIdUrl(String id)
+	{
+		String url = "http://export.arxiv.org/api/query?id_list=" + id;
+		return url;
+	}
 }

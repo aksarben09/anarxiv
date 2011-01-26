@@ -204,4 +204,100 @@ public class ArxivLoader {
 		}
 	}
 
+	/**
+	 * load the info of a specific paper by its id.
+	 */
+	public static HashMap<String, Object> loadPaperById(String paperId) throws LoaderException
+	{
+		if (paperId == null || "".equals(paperId))
+			throw new LoaderException("Invalid paper id.");
+		
+		/* make url. */
+		String qUrl = UrlTable.makeQueryByIdUrl(paperId);
+		
+		/* prepare document. */
+		Document doc = null;
+		
+		/* do the query. */
+		try
+		{
+			/* open url and set timeout. */
+			URL Url = new URL(qUrl);
+			HttpURLConnection conn = (HttpURLConnection)Url.openConnection();
+			conn.setConnectTimeout(ConstantTable.getPaperListLoadTimeout());
+			conn.setReadTimeout(ConstantTable.getPaperListLoadTimeout());
+			
+			/* prepare xml parser. */
+		    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			
+			/* get input stream. */
+			InputStream httpInStream = conn.getInputStream();
+			doc = db.parse(httpInStream);
+			
+			/* parse xml. */
+			NodeList entryList = doc.getElementsByTagName("entry");
+			
+			if (entryList.getLength() == 0)
+				throw new LoaderException("No paper found for id " + paperId);
+			
+			/* fill in the results. */
+			Element node = (Element)entryList.item(0);
+			
+			/* get simple tags. */
+			String id = node.getElementsByTagName("id").item(0).getFirstChild().getNodeValue();
+			String title = node.getElementsByTagName("title").item(0).getFirstChild().getNodeValue();
+			String summary = node.getElementsByTagName("summary").item(0).getFirstChild().getNodeValue();
+			String date = node.getElementsByTagName("published").item(0).getFirstChild().getNodeValue();
+			
+			/* get author list. */
+			ArrayList<String> authors = new ArrayList<String>();
+			NodeList authorList = node.getElementsByTagName("author");
+			for(int j = 0; j < authorList.getLength(); j ++)
+			{
+				Element authorNode = (Element)authorList.item(j);
+				String ath = authorNode.getElementsByTagName("name").item(0).getFirstChild().getNodeValue();
+				authors.add(ath);
+			}
+			
+			/* get url. */
+			String url = ((Element)node.getElementsByTagName("link").item(1)).getAttribute("href");
+			
+			/* fill in paper structure. */
+			HashMap<String, Object> paperMap = new HashMap<String, Object>();
+			
+			//paperList.add(entry);
+			String author = authors.size() == 1 ? authors.get(0) : authors.get(0) + ", et al";
+			
+			paperMap.put("date", date.replace('T',	' ').replace('Z', ' '));
+			paperMap.put("title", title.replace("\n ", " "));
+			paperMap.put("summary", summary.replace('\n', ' ').replace("  ", "\n  ").substring(1));
+			paperMap.put("author", author);
+			paperMap.put("authorlist", authors);
+			paperMap.put("url", url);
+			paperMap.put("id", id);
+		
+			return paperMap;
+		}
+		catch(MalformedURLException e)
+		{
+			throw new LoaderException(e.getMessage(), e);
+		}
+		catch(SocketTimeoutException e)
+		{
+			throw new LoaderException(e.getMessage(), e);
+		}
+		catch(IOException e)
+		{
+			throw new LoaderException(e.getMessage(), e);
+		}
+		catch(SAXException e)
+		{
+			throw new LoaderException("Bad data received, possibly bad connection.", e);
+		}
+		catch(Exception e)
+		{
+			throw new LoaderException(e.getMessage());
+		}
+	}
 }

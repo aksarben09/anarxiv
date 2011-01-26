@@ -104,6 +104,8 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
         
 	    /* event handler. */
         _uiCategoryList.setOnItemClickListener(this);
+        _uiRecentList.setOnItemClickListener(this);
+        _uiFavoriteList.setOnItemClickListener(this);
         
         /* Tab host setup. */
         _tabHost = (TabHost)findViewById(R.id.tabhost);
@@ -152,12 +154,46 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		/* recent  clicked.*/
 		else if(a.getId() == R.id.recentlist)
 		{
+			@SuppressWarnings("unchecked")
+			HashMap<String, Object> itemData = (HashMap<String, Object>)a.getItemAtPosition(position);
 			
+			if (_RecentTabState == R.id.mainmenu_recent_category)
+			{
+				/* start activity, as we do in SubCategoryWnd. */
+				Intent intent = new Intent(this, PaperListWnd.class);
+				intent.putExtra("category", (String)itemData.get("queryword"));
+				intent.putExtra("categoryname", (String)itemData.get("name"));
+				startActivity(intent);
+			}
+			else if (_RecentTabState == R.id.mainmenu_recent_paper)
+			{
+				/* start activity. */
+				Intent intent = new Intent(this, PaperDetailWnd_2.class);
+				intent.putExtra("id", (String)itemData.get("id"));
+				startActivity(intent);
+			}
 		}
 		/* favorite clicked. */
 		else if(a.getId() == R.id.favlist)
 		{
+			@SuppressWarnings("unchecked")
+			HashMap<String, Object> itemData = (HashMap<String, Object>)a.getItemAtPosition(position);
 			
+			if (_FavoriteTabState == R.id.mainmenu_favorite_category)
+			{
+				/* start activity, as we do in SubCategoryWnd. */
+				Intent intent = new Intent(this, PaperListWnd.class);
+				intent.putExtra("category", (String)itemData.get("queryword"));
+				intent.putExtra("categoryname", (String)itemData.get("name"));
+				startActivity(intent);
+			}
+			else if (_FavoriteTabState == R.id.mainmenu_favorite_paper)
+			{
+				/* start activity. */
+				Intent intent = new Intent(this, PaperDetailWnd_2.class);
+				intent.putExtra("id", (String)itemData.get("id"));
+				startActivity(intent);
+			}
 		}
 	}
 
