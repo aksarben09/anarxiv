@@ -17,8 +17,10 @@ import android.os.Looper;
 import android.os.Message;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.GestureDetector;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
@@ -44,6 +46,9 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 	/** adapter for paper list. */
 	SimpleAdapter _uiPaperListAdapter = null;
 	
+	/** gesture detector. */
+	private GestureDetector _gestureDetector = null;
+	
 	/** sync lock. */
 //	private Object _lock = new Object();
 	
@@ -64,6 +69,27 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 	
 	/** paper map list. */
 	private List<Map<String, Object>> _paperMapList = new ArrayList<Map<String, Object>>();
+	
+	/**
+	 * gesture handler.
+	 */
+	private class myGestureListener extends GestureDetector.SimpleOnGestureListener
+	{
+		/**
+		 * onFling.
+		 */
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
+		{
+			if (e1.getX() - e2.getX() > ConstantTable.FLING_MIN_DISTANCE && 
+					Math.abs(velocityX) > ConstantTable.FLING_MIN_VELOCITY)
+			{
+				finish();
+			}
+			
+			return super.onFling(e1, e2, velocityX, velocityY);
+		}
+	}
 	
 	/**
 	 * Loading thread.
@@ -214,12 +240,25 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 		/* register context menu. */
 		registerForContextMenu(_uiPaperList);
 		
+		/* gesture detector. */
+		_gestureDetector = new GestureDetector(this, new myGestureListener());
+		
 		/* show busy box. */
 		_uiBusyBox = ProgressDialog.show(this, "",
 										 getResources().getText(R.string.loading_please_wait));
 		
 		ArxivLoadingThread t = new ArxivLoadingThread();
 		t.start();
+	}
+	
+	/**
+	 * intercept all touch event for gesture detector.
+	 */
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent ev)
+	{
+		_gestureDetector.onTouchEvent(ev);
+		return super.dispatchTouchEvent(ev);
 	}
 	
 	/**
@@ -319,6 +358,7 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 		
 		if (item.getItemId() == R.id.ctxmenu_add_to_favorite)
 		{
+			@SuppressWarnings("unchecked")
 			HashMap<String, Object> itemData = (HashMap<String, Object>)_uiPaperList.getItemAtPosition(info.position);
 			
 			AnarxivDB.Paper paper = new AnarxivDB.Paper();

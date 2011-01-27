@@ -14,9 +14,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -39,6 +41,11 @@ public class PaperDetailWnd extends Activity
 	private TextView _uiFileSize = null;
 	
 	/**
+	 * gesture detector.
+	 */
+	private GestureDetector _gestureDetector = null;
+	
+	/**
 	 * downloader.
 	 */
 	private ArxivFileDownloader _downloader = new ArxivFileDownloader();
@@ -52,6 +59,27 @@ public class PaperDetailWnd extends Activity
 	 * local file path.
 	 */
 	private String _localFilePath = null;
+	
+	/**
+	 * gesture handler.
+	 */
+	private class myGestureListener extends GestureDetector.SimpleOnGestureListener
+	{
+		/**
+		 * onFling.
+		 */
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
+		{
+			if (e1.getX() - e2.getX() > ConstantTable.FLING_MIN_DISTANCE && 
+					Math.abs(velocityX) > ConstantTable.FLING_MIN_VELOCITY)
+			{
+				finish();
+			}
+			
+			return super.onFling(e1, e2, velocityX, velocityY);
+		}
+	}
 	
 	/**
 	 * util: view pdf file.
@@ -205,9 +233,22 @@ public class PaperDetailWnd extends Activity
 		/* context menu. */
 		registerForContextMenu(_uiSummary);
 		
+		/* gesture detector. */
+		_gestureDetector = new GestureDetector(this, new myGestureListener());
+		
 		/* load file size. */
 		UiUtils.showToast(this, getResources().getString(R.string.loading_file_size));
 		new FileSizeLoadingThread().start();
+	}
+	
+	/**
+	 * intercept all touch event for gesture detector.
+	 */
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent ev)
+	{
+		_gestureDetector.onTouchEvent(ev);
+		return super.dispatchTouchEvent(ev);
 	}
 	
 	/**
