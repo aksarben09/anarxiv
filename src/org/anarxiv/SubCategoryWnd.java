@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.GestureDetector;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -33,8 +35,32 @@ public class SubCategoryWnd extends Activity implements OnItemClickListener
 	/** sub category list. */
 	private String[] _subCatList = null;
 	
+	/** gesture detector. */
+	private GestureDetector _gestureDetector = null;
+	
 	/** arxiv loader. */
 //	private ArxivLoader _arxivLoader = anarxiv.getArxivLoaderInstance();
+	
+	/**
+	 * gesture handler.
+	 */
+	private class myGestureListener extends GestureDetector.SimpleOnGestureListener
+	{
+		/**
+		 * onFling.
+		 */
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
+		{
+			if (e1.getX() - e2.getX() > ConstantTable.FLING_MIN_DISTANCE && 
+					Math.abs(velocityX) > ConstantTable.FLING_MIN_VELOCITY)
+			{
+				finish();
+			}
+			
+			return super.onFling(e1, e2, velocityX, velocityY);
+		}
+	}
 
 	/** 
 	 * Called when the activity is first created.
@@ -66,6 +92,9 @@ public class SubCategoryWnd extends Activity implements OnItemClickListener
 		
 		/* register context menu. */
 		registerForContextMenu(_uiSubCatList);
+		
+		/* gesture detector. */
+		_gestureDetector = new GestureDetector(this, new myGestureListener());
 	}
 	
 	/** 
@@ -99,6 +128,16 @@ public class SubCategoryWnd extends Activity implements OnItemClickListener
 			intent.putExtra("categoryname", catName);
 			startActivity(intent);
 		}
+	}
+	
+	/**
+	 * intercept all touch event for gesture detector.
+	 */
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent ev)
+	{
+		_gestureDetector.onTouchEvent(ev);
+		return super.dispatchTouchEvent(ev);
 	}
 	
 	/**

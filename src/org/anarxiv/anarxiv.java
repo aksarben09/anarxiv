@@ -10,9 +10,11 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -30,6 +32,9 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 	private ListView _uiRecentList = null;
 	private ListView _uiFavoriteList = null;
 	
+	/** gesture detector. */
+	private GestureDetector _gestureDetector = null;
+	
 	/** Url table. */
 	public static final UrlTable _urlTbl = new UrlTable();
 	
@@ -42,6 +47,33 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 	/** ui states. */
 	private int _RecentTabState = R.id.mainmenu_recent_category;
 	private int _FavoriteTabState = R.id.mainmenu_favorite_category;
+	
+	/** views in the tab. */
+	private int[] _tabViewList = {R.string.tabid_Category, R.string.tabid_Recent, R.string.tabid_Favorite};
+	
+	/**
+	 * gesture handler.
+	 */
+	private class myOnGestureListener extends GestureDetector.SimpleOnGestureListener
+	{
+		/* onFling. */
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
+		{
+			if (e1.getX() - e2.getX() > ConstantTable.FLING_MIN_DISTANCE && 
+					Math.abs(velocityX) > ConstantTable.FLING_MIN_VELOCITY)
+			{
+				gotoLeftTab();
+			}
+			else if (e2.getX() - e1.getX() > ConstantTable.FLING_MIN_DISTANCE &&
+						Math.abs(velocityX) > ConstantTable.FLING_MIN_VELOCITY)
+			{
+				gotoRightTab();
+			}
+			
+			return super.onFling(e1, e2, velocityX, velocityY);
+		}
+	}
 	
 	/**
 	 * get ArxivLoader instance.
@@ -133,7 +165,20 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
         /* Fill the category list. */
         _uiCategoryList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, /*UrlTable.Category*/_urlTbl.getMainCategoryList()));
         registerForContextMenu(_uiFavoriteList);
+        
+        /* gesture detector. */
+        _gestureDetector = new GestureDetector(this, new myOnGestureListener());
 	}
+    
+    /**
+     * we have to intercept touch event to get the detector working.
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev)
+    {
+    	_gestureDetector.onTouchEvent(ev);
+    	return super.dispatchTouchEvent(ev);
+    }
 
     /** 
      * Handler: onItemClick. 
@@ -575,5 +620,26 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		item.setVisible(visible);
 		item = menu.findItem(R.id.mainmenu_favorite_delete_all);
 		item.setVisible(visible);
+	}
+	
+	/**
+	 * swipe util: goto left tab.
+	 */
+	private void gotoLeftTab()
+	{
+		int i = _tabHost.getCurrentTab();
+		if (i == 0)
+			i = 2;
+		else
+			i --;
+		_tabHost.setCurrentTab(i);
+	}
+	
+	/**
+	 * swipe util: goto right tab.
+	 */
+	private void gotoRightTab()
+	{
+		_tabHost.setCurrentTab( (_tabHost.getCurrentTab() + 1) % 3);
 	}
 }
