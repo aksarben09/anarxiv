@@ -4,17 +4,20 @@
 package org.anarxiv;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -199,6 +202,9 @@ public class PaperDetailWnd extends Activity
 		String[] urlParts = _fileUrl.split("/");
 		_localFilePath = ConstantTable.getAppRootDir() + "/" + urlParts[urlParts.length - 1] + ".pdf";
 		
+		/* context menu. */
+		registerForContextMenu(_uiSummary);
+		
 		/* load file size. */
 		UiUtils.showToast(this, getResources().getString(R.string.loading_file_size));
 		new FileSizeLoadingThread().start();
@@ -242,5 +248,70 @@ public class PaperDetailWnd extends Activity
 		}
 		
 		return super.onOptionsItemSelected(item);
+	}
+	
+	/**
+	 * context menu.
+	 */
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
+	{
+		super.onCreateContextMenu(menu, v, menuInfo);
+		
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.ctxmenu_paper_detail, menu);
+		menu.setHeaderTitle("Options");
+	}
+	
+	/**
+	 * context menu handler.
+	 */
+	@Override
+	public boolean onContextItemSelected(MenuItem item)
+	{
+		if (item.getItemId() == R.id.ctxmenu_paper_detail_view)
+		{
+			new PdfDownloadingThread().start();
+			UiUtils.showToast(this, getResources().getString(R.string.loading_file));
+		}
+		else if (item.getItemId() == R.id.ctxmenu_paper_detail_delete)
+		{
+			try
+			{
+				StorageUtils.removeFile(_localFilePath);
+				UiUtils.showToast(this, getResources().getString(R.string.file_deleted));
+			}
+			catch (Exception e)
+			{
+				
+			}
+		}
+		else if (item.getItemId() == R.id.ctxmenu_paper_detail_add_to_favorite)
+		{
+			/* get data from intent. */
+			Intent intent = getIntent();
+			@SuppressWarnings("unchecked")
+			HashMap<String, Object> detail = (HashMap<String, Object>)intent.getSerializableExtra("paperdetail");
+			
+			/* fill in paper struct. */
+			AnarxivDB.Paper paper = new AnarxivDB.Paper();
+			paper._author = (String)detail.get("author");
+			paper._date = (String)detail.get("date");
+			paper._id = (String)detail.get("id");
+			paper._title = (String)detail.get("title");
+			paper._url = (String)detail.get("url");
+			
+			try
+			{
+				AnarxivDB.getInstance().addFavoritePaper(paper);
+				UiUtils.showToast(this, "Added to favorite: " + paper._title);
+			}
+			catch (AnarxivDB.DBException e)
+			{
+				UiUtils.showToast(this, e.getMessage());
+			}
+		}
+		
+		return super.onContextItemSelected(item);
 	}
 }
