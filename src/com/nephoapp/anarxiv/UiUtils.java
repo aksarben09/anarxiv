@@ -16,7 +16,7 @@
 
 package com.nephoapp.anarxiv;
 
-import org.anarxiv.R;
+import com.nephoapp.anarxiv.R;
 
 import android.app.AlertDialog;
 import android.content.Context;

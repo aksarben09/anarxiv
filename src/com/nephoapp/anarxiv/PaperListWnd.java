@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.anarxiv.R;
+import com.nephoapp.anarxiv.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -71,7 +71,7 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 	private boolean _isLoading = false;
 	
 	/** arxiv loader. */
-	private ArxivLoader _arxivLoader = anarxiv.getArxivLoaderInstance();
+	private ArxivLoader _arxivLoader = ArxivLoader.getInstance();
 	
 	/** the category of this list for query. */
 	private String _paperCategory = null;
@@ -166,7 +166,7 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 			{
 				_uiPaperListAdapter = new SimpleAdapter(PaperListWnd.this,
 														_paperMapList,
-														R.layout.paperlistitem,
+														R.layout.paper_list_item,
 														new String[] {"title", 
 																	  "date", 
 																	  "author"},
@@ -231,7 +231,7 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.paperlist);
+		setContentView(R.layout.paper_list);
 		
 		/* reste loader. */
 		_arxivLoader.reset();

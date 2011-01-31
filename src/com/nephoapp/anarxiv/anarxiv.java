@@ -20,7 +20,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
-import org.anarxiv.R;
+import com.nephoapp.anarxiv.R;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -56,18 +56,12 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 	/** Url table. */
 	public static final UrlTable _urlTbl = new UrlTable();
 	
-	/** arxiv loader. */
-	private static ArxivLoader _arxivLoader = null;
-	
 	/** id of current tab. */
 	private String _currentTabId = null;
 	
 	/** ui states. */
 	private int _RecentTabState = R.id.mainmenu_recent_category;
 	private int _FavoriteTabState = R.id.mainmenu_favorite_category;
-	
-	/** views in the tab. */
-	private int[] _tabViewList = {R.string.tabid_Category, R.string.tabid_Recent, R.string.tabid_Favorite};
 	
 	/**
 	 * gesture handler.
@@ -91,16 +85,6 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 			
 			return super.onFling(e1, e2, velocityX, velocityY);
 		}
-	}
-	
-	/**
-	 * get ArxivLoader instance.
-	 */
-	public static ArxivLoader getArxivLoaderInstance()
-	{
-		if(anarxiv._arxivLoader == null)
-			anarxiv._arxivLoader = new ArxivLoader();
-		return anarxiv._arxivLoader;
 	}
 	
 	/**
@@ -183,6 +167,7 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
         /* Fill the category list. */
         _uiCategoryList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, /*UrlTable.Category*/_urlTbl.getMainCategoryList()));
         registerForContextMenu(_uiFavoriteList);
+        registerForContextMenu(_uiRecentList);
         
         /* gesture detector. */
         _gestureDetector = new GestureDetector(this, new myOnGestureListener());
@@ -382,9 +367,19 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
 	{
 		super.onCreateContextMenu(menu, v, menuInfo);
+		
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.ctxmenu_delete_from_favorite, menu);
-		menu.setHeaderTitle("Delete");
+		
+		if (v.getId() == R.id.favlist)
+		{
+			inflater.inflate(R.menu.ctxmenu_delete_from_favorite, menu);
+			menu.setHeaderTitle(getResources().getText(R.string.ctxmenu_title_delete));
+		}
+		else if (v.getId() == R.id.recentlist)
+		{
+			inflater.inflate(R.menu.ctxmenu_add_to_favorite, menu);
+			menu.setHeaderTitle(getResources().getText(R.string.ctxmenu_title_add_to_favorite));
+		}
 	}
 	
 	/**
@@ -396,6 +391,7 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		
 		if (item.getItemId() == R.id.ctxmenu_delete_from_favorite)
 		{
+			@SuppressWarnings("unchecked")
 			HashMap<String, Object> itemData = (HashMap<String, Object>)_uiFavoriteList.getItemAtPosition(info.position);
 			
 			if (_FavoriteTabState == R.id.mainmenu_favorite_category)
@@ -437,6 +433,49 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 				}
 			}
 		}
+		/* if we get here, we must be in the recent list since you dont need to add to favorite from favorite. */
+		else if (item.getItemId() == R.id.ctxmenu_add_to_favorite)
+		{
+			@SuppressWarnings("unchecked")
+			HashMap<String, Object> itemData = (HashMap<String, Object>)_uiRecentList.getItemAtPosition(info.position);
+			
+			if (_RecentTabState == R.id.mainmenu_recent_category)
+			{
+				AnarxivDB.Category category = new AnarxivDB.Category();
+				category._name = (String)itemData.get("name");
+				category._parent = (String)itemData.get("parent");
+				category._queryWord = (String)itemData.get("queryword");
+				
+				try
+				{
+					AnarxivDB.getInstance().addFavoriteCategory(category);
+					UiUtils.showToast(this, "Added to favorite: " + category._name);
+				}
+				catch (AnarxivDB.DBException e)
+				{
+					UiUtils.showToast(this, e.getMessage());
+				}
+			}
+			else if (_RecentTabState == R.id.mainmenu_recent_paper)
+			{
+				AnarxivDB.Paper paper = new AnarxivDB.Paper();
+				paper._author = (String)itemData.get("author");
+				paper._date = (String)itemData.get("date");
+				paper._id = (String)itemData.get("id");
+				paper._title = (String)itemData.get("title");
+				paper._url = (String)itemData.get("url");
+				
+				try
+				{
+					AnarxivDB.getInstance().addFavoritePaper(paper);
+					UiUtils.showToast(this, "Added to favorite: " + paper._title);
+				}
+				catch (AnarxivDB.DBException e)
+				{
+					UiUtils.showToast(this, e.getMessage());
+				}
+			}
+		}
 		
 		return super.onContextItemSelected(item);
 	}
@@ -455,7 +494,7 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 			/* adapter. */
 			SimpleAdapter adapter = new SimpleAdapter(this,
 													  recentPaperList,
-													  R.layout.paperlistitem,
+													  R.layout.paper_list_item,
 													  new String[] {"title",
 																	"date",
 																	"author"},
@@ -507,7 +546,7 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 			/* adapter. */
 			SimpleAdapter adapter = new SimpleAdapter(this,
 													  favoritePaperList,
-													  R.layout.paperlistitem,
+													  R.layout.paper_list_item,
 													  new String[] {"title",
 																	"date",
 																	"author"},

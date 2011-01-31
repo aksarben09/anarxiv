@@ -60,6 +60,11 @@ public class ArxivLoader {
 	}
 	
 	/**
+	 * singleton.
+	 */
+	static private ArxivLoader _loader = null;
+	
+	/**
 	 * current query start point.
 	 */
 	private int _qStart = 0;
@@ -79,7 +84,17 @@ public class ArxivLoader {
 	 */
 	private int _maxResults = 10;
 	
+	public static ArxivLoader getInstance()
+	{
+		if (ArxivLoader._loader == null)
+			ArxivLoader._loader = new ArxivLoader();
+		return ArxivLoader._loader;
+	}
 	
+	/**
+	 * 
+	 * @param maxResults
+	 */
 	public void setMaxResults(int maxResults)
 	{
 		_maxResults = maxResults;

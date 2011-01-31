@@ -113,7 +113,7 @@ public class UrlTable
 	private void buildUrlMap()
 	{
 		/* astrophysics. */
-		this._UrlMap_Astrophysics.put("All Astrophysics", 				"astro-ph");
+//		this._UrlMap_Astrophysics.put("All Astrophysics", 				"astro-ph");
 		this._UrlMap_Astrophysics.put("Cosmology and Extragalactic", 	"astro-ph.CO");
 		this._UrlMap_Astrophysics.put("Earth and Planetary", 			"astro-ph.EP");
 		this._UrlMap_Astrophysics.put("Galaxy", 						"astro-ph.GA");
@@ -122,7 +122,7 @@ public class UrlTable
 		this._UrlMap_Astrophysics.put("Solar and Stellar", 				"astro-ph.SR");
 		
 		/* condensed matter. */
-		this._UrlMap_CondensedMatter.put("All Condensed Matter",					"cond-mat");
+//		this._UrlMap_CondensedMatter.put("All Condensed Matter",					"cond-mat");
 		this._UrlMap_CondensedMatter.put("Disordered Systems and Neural Networks",	"cond-mat.dis-nn");
 		this._UrlMap_CondensedMatter.put("Materials Science", 						"cond-mat.mtrl-sci");
 		this._UrlMap_CondensedMatter.put("Mesoscale and Nanoscale Physics", 		"cond-mat.mes-hall");
@@ -144,7 +144,7 @@ public class UrlTable
 		this._UrlMap_Nuclear.put("Theory", 		"nucl-th");
 		
 		/* physics. */
-		this._UrlMap_Physics.put("All Physics", 								"physics");
+//		this._UrlMap_Physics.put("All Physics", 								"physics");
 		this._UrlMap_Physics.put("Accelerator Physics", 						"physics.acc-ph");
 		this._UrlMap_Physics.put("Atmospheric and Oceanic Physics", 			"physics.ao-ph");
 		this._UrlMap_Physics.put("Atomic Physics", 								"physics.atom-ph");
@@ -168,7 +168,7 @@ public class UrlTable
 		this._UrlMap_Physics.put("Space Physics", 								"physics.space-ph");
 		
 		/* mathematics. */
-		this._UrlMap_Math.put("All Mathematics", 				"math");
+//		this._UrlMap_Math.put("All Mathematics", 				"math");
 		this._UrlMap_Math.put("Algebraic Geometry", 			"math.AG");
 		this._UrlMap_Math.put("Algebraic Topology", 			"math.AT");
 		this._UrlMap_Math.put("Analysis of PDEs", 				"math.AP");
@@ -203,7 +203,7 @@ public class UrlTable
 		this._UrlMap_Math.put("Symplectic Geometry", 			"math.SG");
 		
 		/* nonlinear science. */
-		this._UrlMap_NonlinearSci.put("All Nonlinear Science", 						"nlin");
+//		this._UrlMap_NonlinearSci.put("All Nonlinear Science", 						"nlin");
 		this._UrlMap_NonlinearSci.put("Adaptation and Self-Organizing Systems", 	"nlin.AO");
 		this._UrlMap_NonlinearSci.put("Cellular Automata and Lattice Gases", 		"nlin.CG");
 		this._UrlMap_NonlinearSci.put("Chaotic Dynamics", 							"nlin.CD");
@@ -211,7 +211,7 @@ public class UrlTable
 		this._UrlMap_NonlinearSci.put("Pattern Formation and Solitons", 			"nlin.PS");
 		
 		/* computer science. */	   
-		this._UrlMap_CS.put("All Computer Science", 							"cs");
+//		this._UrlMap_CS.put("All Computer Science", 							"cs");
 		this._UrlMap_CS.put("Artificial Intelligence", 							"cs.AI");
 		this._UrlMap_CS.put("Computation and Language", 						"cs.CL");
 		this._UrlMap_CS.put("Computational Complexity", 						"cs.CC");
@@ -253,7 +253,7 @@ public class UrlTable
 		this._UrlMap_CS.put("Systems and Control", 								"cs.SY");
 		
 		/* quantitative biology. */
-		this._UrlMap_QuantBio.put("All Quant Bio",				"q-bio");
+//		this._UrlMap_QuantBio.put("All Quant Bio",				"q-bio");
 		this._UrlMap_QuantBio.put("Biomolecules",				"q-bio.BM");
 		this._UrlMap_QuantBio.put("Cell Behavior",				"q-bio.CB");
 		this._UrlMap_QuantBio.put("Genomics",					"q-bio.GN");
@@ -266,7 +266,7 @@ public class UrlTable
 		this._UrlMap_QuantBio.put("Tissues and Organs",			"q-bio.TO");
 		
 		/* quantitative finance. */
-		this._UrlMap_QuantFinance.put("All Quant Finance", 					"q-fin");
+//		this._UrlMap_QuantFinance.put("All Quant Finance", 					"q-fin");
 		this._UrlMap_QuantFinance.put("Computational Finance", 				"q-fin.CP");
 		this._UrlMap_QuantFinance.put("General Finance", 					"q-fin.GN");
 		this._UrlMap_QuantFinance.put("Portfolio Management", 				"q-fin.PM");
@@ -276,7 +276,7 @@ public class UrlTable
 		this._UrlMap_QuantFinance.put("Trading and Market Microstructure", 	"q-fin.TR");
 		
 		/* statistics. */		   
-		this._UrlMap_Statistics.put("All Statistics", 		"stat");
+//		this._UrlMap_Statistics.put("All Statistics", 		"stat");
 		this._UrlMap_Statistics.put("Applications", 		"stat.AP");
 		this._UrlMap_Statistics.put("Computation", 			"stat.CO");
 		this._UrlMap_Statistics.put("Machine Learning", 	"stat.ML");

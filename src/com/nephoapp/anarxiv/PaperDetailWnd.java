@@ -20,7 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.anarxiv.R;
+import com.nephoapp.anarxiv.R;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -212,7 +212,7 @@ public class PaperDetailWnd extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.paperdetailview);
+		setContentView(R.layout.paper_detail_view);
 		
 		/* get intent and associated params. */
 		Intent intent = getIntent();
@@ -237,7 +237,7 @@ public class PaperDetailWnd extends Activity
 		/* set list data. */
 		@SuppressWarnings("unchecked")
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, 
-																R.layout.authorlistitem,
+																R.layout.author_list_item,
 																(ArrayList<String>)detail.get("authorlist"));
 		_uiAuthorList.setAdapter(adapter);
 		
