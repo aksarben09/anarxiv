@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package org.anarxiv;
+package com.nephoapp.anarxiv;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+
+import org.anarxiv.R;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.anarxiv;
+package com.nephoapp.anarxiv;
+
+import org.anarxiv.R;
 
 import android.app.Activity;
 import android.content.Intent;

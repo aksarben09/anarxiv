@@ -14,42 +14,37 @@
  * limitations under the License.
  */
 
-package org.anarxiv;
+package com.nephoapp.anarxiv;
+
+import org.anarxiv.R;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.widget.Toast;
 
 /**
  * @author lihe
  *
  */
-public class ConstantTable 
+public class UiUtils 
 {
-	/** timeout for loading paper list. */
-	private static int _timeoutPaperListLoad = 5000;
-	
-	/** consts for fling. */
-	public static final int FLING_MIN_DISTANCE = 100;
-	public static final int FLING_MIN_VELOCITY = 25;
-	
 	/**
-	 * set paper list loading timeout.
+	 * show an alert box.
 	 */
-	public static void setPaperListLoadTimeout(int timeout)
+	public static void showErrorMessage(Context context, String errMsg)
 	{
-		_timeoutPaperListLoad = timeout;
+		new AlertDialog.Builder(context)
+					   .setTitle(R.string.error_dialog_title)
+					   .setMessage(errMsg)
+					   .setPositiveButton(R.string.confirm_btn_caption, null)
+					   .show();
 	}
 	
 	/**
-	 * get paper list loading timeout.
+	 * show a toast.
 	 */
-	public static int getPaperListLoadTimeout()
+	public static void showToast(Context context, String msg)
 	{
-		return _timeoutPaperListLoad;
-	}
-	
-	/**
-	 * get application root dir.
-	 */
-	public static String getAppRootDir()
-	{
-		return StorageUtils.getExternalStorageRoot() + "/aNarXiv";
+		Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
 	}
 }

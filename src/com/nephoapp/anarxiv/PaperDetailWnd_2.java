@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.anarxiv;
+package com.nephoapp.anarxiv;
 
 import java.io.File;
 import java.util.HashMap;
