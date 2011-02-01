@@ -165,7 +165,7 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
         _tabHost.addTab(tabspec);
         
         /* Fill the category list. */
-        _uiCategoryList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, /*UrlTable.Category*/_urlTbl.getMainCategoryList()));
+        _uiCategoryList.setAdapter(new ArrayAdapter<String>(this, R.layout.categoryitem, /*UrlTable.Category*/_urlTbl.getMainCategoryList()));
         registerForContextMenu(_uiFavoriteList);
         registerForContextMenu(_uiRecentList);
         
