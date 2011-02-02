@@ -27,9 +27,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.GestureDetector;
@@ -119,108 +117,64 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 			try
 			{	
 				/* get data. */
-			//	ArrayList<ArxivLoader.Paper> newPaperList = _arxivLoader.loadPapers(_paperCategory);
 				List<Map<String, Object>> paperMapList = _arxivLoader.loadPapers(_paperCategory);
 				_paperMapList.addAll(paperMapList);
-					
-				/* send message. */
-				PaperDataHandler handler = new PaperDataHandler(mainLooper);
-				handler.removeMessages(0);
-				handler.sendEmptyMessage(0);
+				
+				PaperListWnd.this.runOnUiThread(new Runnable()
+						{
+							public void run()
+							{
+								if (_uiPaperListAdapter == null)
+								{
+									_uiPaperListAdapter = new SimpleAdapter(PaperListWnd.this,
+																			_paperMapList,
+																			R.layout.paper_list_item,
+																			new String[] {"title", 
+																						  "date", 
+																						  "author"},
+																			new int[] {R.id.paperitem_title, 
+																					   R.id.paperitem_date, 
+																					   R.id.paperitem_author});
+									_uiPaperList.setAdapter(_uiPaperListAdapter);
+								}
+								else
+								{
+									/* notify the view that the data has changed. */
+									_uiPaperListAdapter.notifyDataSetChanged();
+								}
+								
+								if (_uiBusyBox != null)
+								{
+									_uiBusyBox.dismiss();
+									_uiBusyBox = null;
+								}
+								
+								_isLoading = false;
+							}
+						});
 			}
 			catch(ArxivLoader.LoaderException e)
-			{
-//				new AlertDialog.Builder(PaperListWnd.this).setTitle(R.string.error_dialog_title)
-//							   .setMessage(e.getMessage())
-//							   .setPositiveButton(R.string.confirm_btn_caption, null)
-//							   .show();
+			{	
+				final ArxivLoader.LoaderException err = e;
 				
-				ExceptionHandler handler = new ExceptionHandler(mainLooper);
-				Message msg = handler.obtainMessage(0, e.getMessage());
-				handler.removeMessages(0);
-				handler.sendMessage(msg);
+				PaperListWnd.this.runOnUiThread(new Runnable()
+					{
+						public void run()
+						{
+							/* dismiss busy box if any. */
+							if (_uiBusyBox != null)
+							{
+								_uiBusyBox.dismiss();
+								_uiBusyBox = null;
+							}
+							
+							_isLoading = false;
+							
+							/* show error message. */
+							UiUtils.showErrorMessage(PaperListWnd.this, err.getMessage());
+						}
+					});
 			}
-		}
-	}
-	
-	/**
-	 * handler for handling paper data.
-	 */
-	private class PaperDataHandler extends Handler
-	{
-		/**
-		 * 
-		 */
-		public PaperDataHandler(Looper looper)
-		{
-			super(looper);
-		}
-		
-		/**
-		 * handler.
-		 */
-		@Override
-		public void handleMessage(Message msg)
-		{	
-			if (_uiPaperListAdapter == null)
-			{
-				_uiPaperListAdapter = new SimpleAdapter(PaperListWnd.this,
-														_paperMapList,
-														R.layout.paper_list_item,
-														new String[] {"title", 
-																	  "date", 
-																	  "author"},
-														new int[] {R.id.paperitem_title, 
-																   R.id.paperitem_date, 
-																   R.id.paperitem_author});
-				_uiPaperList.setAdapter(_uiPaperListAdapter);
-			}
-			else
-			{
-				/* notify the view that the data has changed. */
-				_uiPaperListAdapter.notifyDataSetChanged();
-			}
-			
-			if (_uiBusyBox != null)
-			{
-				_uiBusyBox.dismiss();
-				_uiBusyBox = null;
-			}
-			
-			_isLoading = false;
-		}
-	}
-	
-	/**
-	 * error handler.
-	 */
-	private class ExceptionHandler extends Handler
-	{
-		/**
-		 * 
-		 */
-		public ExceptionHandler(Looper looper)
-		{
-			super(looper);
-		}
-		
-		/**
-		 * handler.
-		 */
-		@Override
-		public void handleMessage(Message msg)
-		{
-			/* dismiss busy box if any. */
-			if (_uiBusyBox != null)
-			{
-				_uiBusyBox.dismiss();
-				_uiBusyBox = null;
-			}
-			
-			_isLoading = false;
-			
-			/* show error message. */
-			UiUtils.showErrorMessage(PaperListWnd.this, (String)msg.obj);
 		}
 	}
 	

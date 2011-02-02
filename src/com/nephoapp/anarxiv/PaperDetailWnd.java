@@ -219,6 +219,17 @@ public class PaperDetailWnd extends Activity
 		@SuppressWarnings("unchecked")
 		HashMap<String, Object> detail = (HashMap<String, Object>)intent.getSerializableExtra("paperdetail");
 		
+		displayPaperDetail(detail);
+	}
+	
+	/**
+	 * display paper detail.
+	 */
+	protected void displayPaperDetail(HashMap<String, Object> detail)
+	{
+		if (detail == null)
+			return;
+		
 		/* get ui components. */
 		_uiAuthorList = (ListView)findViewById(R.id.paperdetail_authorlist);
 		_uiPaperTitle = (TextView)findViewById(R.id.paperdetail_title);
