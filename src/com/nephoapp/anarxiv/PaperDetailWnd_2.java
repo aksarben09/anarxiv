@@ -19,20 +19,21 @@ package com.nephoapp.anarxiv;
 import java.io.File;
 import java.util.HashMap;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
 public class PaperDetailWnd_2 extends PaperDetailWnd 
 {
 	/**
+	 * ui.
+	 */
+	ProgressDialog _uiBusyBox = null;
+	
+	/**
 	 * paper id.
 	 */
 	private String _paperId = null;
-	
-	/**
-	 * 
-	 */
-	private Bundle _savedInstanceState = null;
 	
 	/**
 	 * loading thread.
@@ -53,9 +54,7 @@ public class PaperDetailWnd_2 extends PaperDetailWnd
 							{
 								public void run()
 								{
-									Intent intent = PaperDetailWnd_2.this.getIntent();
-									intent.putExtra("paperdetail", paperMap);
-									PaperDetailWnd_2.this.onCreate(_savedInstanceState);
+									PaperDetailWnd_2.this.displayPaperDetail(paperMap);
 								}
 							});
 			}
@@ -72,6 +71,13 @@ public class PaperDetailWnd_2 extends PaperDetailWnd
 									}
 								});
 			}
+			
+			/* dismiss waiting box. */
+			if (_uiBusyBox != null)
+			{
+				_uiBusyBox.dismiss();
+				_uiBusyBox = null;
+			}
 		}
 	}
 	
@@ -86,6 +92,7 @@ public class PaperDetailWnd_2 extends PaperDetailWnd
 		_paperId = new File(intent.getStringExtra("id")).getName();
 		
 		/* load the detail. */
+		/*
 		try
 		{
 			HashMap<String, Object> paperMap = ArxivLoader.loadPaperById(_paperId);
@@ -95,6 +102,14 @@ public class PaperDetailWnd_2 extends PaperDetailWnd
 		{
 			UiUtils.showToast(PaperDetailWnd_2.this, e.getMessage());
 		}
+		*/
+		
+		/* waiting box. */
+		_uiBusyBox = ProgressDialog.show(this, "",
+				 getResources().getText(R.string.loading_please_wait));
+		
+		/* start. */
+		new PaperDetailLoadingThread().start();
 		
 		super.onCreate(savedInstanceState);
 	}

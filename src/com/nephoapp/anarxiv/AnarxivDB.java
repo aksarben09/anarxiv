@@ -342,6 +342,7 @@ public class AnarxivDB
 	{
 		try
 		{
+			_sqliteDB.delete(AnarxivDB._tbl_RecentPaper, "_id = '" + paper._id + "'", null);
 			return _sqliteDB.insert(AnarxivDB._tbl_RecentPaper, null, AnarxivDB.paperToContentValues(paper));
 		}
 		catch (SQLiteException e)
