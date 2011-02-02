@@ -21,12 +21,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.nephoapp.anarxiv.R;
+
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -42,6 +40,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 
+/**
+ * @author lihe
+ *
+ */
 public class PaperDetailWnd extends Activity 
 {
 	/**
@@ -250,32 +252,8 @@ public class PaperDetailWnd extends Activity
 		_gestureDetector = new GestureDetector(this, new myGestureListener());
 		
 		/* load file size. */
-		
-		
-		
-		try
-		{
-			String service=Context.CONNECTIVITY_SERVICE;
-			ConnectivityManager connectivity=(ConnectivityManager) getSystemService(service);
-			NetworkInfo wifiNetwork=connectivity.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-			NetworkInfo mobiNetwork=connectivity.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-			if(wifiNetwork.getState()==NetworkInfo.State.CONNECTED||mobiNetwork.getState()==NetworkInfo.State.CONNECTED)
-			{
-	
-				UiUtils.showToast(this, getResources().getString(R.string.loading_file_size));
-				new FileSizeLoadingThread().start();
-			}
-			else{
-				/* show no network  box. */
-				UiUtils.showErrorMessage(this, getResources().getString(R.string.No_Network));
-			}
-		}
-		catch (Exception e)
-		{
-			UiUtils.showErrorMessage(this, e.getMessage());
-		}
-		
-		
+		UiUtils.showToast(this, getResources().getString(R.string.loading_file_size));
+		new FileSizeLoadingThread().start();
 	}
 	
 	/**
@@ -309,27 +287,8 @@ public class PaperDetailWnd extends Activity
 	{
 		if (item.getItemId() == R.id.menu_paperdetail_view)
 		{
-			try
-			{
-				String service=Context.CONNECTIVITY_SERVICE;
-				ConnectivityManager connectivity=(ConnectivityManager) getSystemService(service);
-				NetworkInfo wifiNetwork=connectivity.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-				NetworkInfo mobiNetwork=connectivity.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-				if(wifiNetwork.getState()==NetworkInfo.State.CONNECTED||mobiNetwork.getState()==NetworkInfo.State.CONNECTED)
-				{
-					new PdfDownloadingThread().start();
-					UiUtils.showToast(this, getResources().getString(R.string.loading_file));
-				}
-				else{
-					/* show no network  box. */
-					UiUtils.showErrorMessage(this, getResources().getString(R.string.No_Network));
-				}
-			}
-			catch (Exception e)
-			{
-				UiUtils.showErrorMessage(this, e.getMessage());
-			}
-			
+			new PdfDownloadingThread().start();
+			UiUtils.showToast(this, getResources().getString(R.string.loading_file));
 		}
 		else if (item.getItemId() == R.id.menu_paperdetail_delete)
 		{
@@ -368,26 +327,8 @@ public class PaperDetailWnd extends Activity
 	{
 		if (item.getItemId() == R.id.ctxmenu_paper_detail_view)
 		{
-			try
-			{
-				String service=Context.CONNECTIVITY_SERVICE;
-				ConnectivityManager connectivity=(ConnectivityManager) getSystemService(service);
-				NetworkInfo wifiNetwork=connectivity.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-				NetworkInfo mobiNetwork=connectivity.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-				if(wifiNetwork.getState()==NetworkInfo.State.CONNECTED||mobiNetwork.getState()==NetworkInfo.State.CONNECTED)
-				{
-					new PdfDownloadingThread().start();
-					UiUtils.showToast(this, getResources().getString(R.string.loading_file));
-				}
-				else{
-					/* show no network  box. */
-					UiUtils.showErrorMessage(this, getResources().getString(R.string.No_Network));
-				}
-			}
-			catch (Exception e)
-			{
-				UiUtils.showErrorMessage(this, e.getMessage());
-			}
+			new PdfDownloadingThread().start();
+			UiUtils.showToast(this, getResources().getString(R.string.loading_file));
 		}
 		else if (item.getItemId() == R.id.ctxmenu_paper_detail_delete)
 		{

@@ -25,10 +25,7 @@ import com.nephoapp.anarxiv.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -50,14 +47,16 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 
-
+/**
+ * @author lihe
+ *
+ */
 public class PaperListWnd extends Activity implements OnItemClickListener, OnScrollListener
 {
 	/** ui components. */
 	ListView _uiPaperList = null;
 	TextView _uiCategoryName = null;
 	ProgressDialog _uiBusyBox = null;
-	ProgressDialog _uiNoNetBox = null;
 	
 	/** adapter for paper list. */
 	SimpleAdapter _uiPaperListAdapter = null;
@@ -110,7 +109,7 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 	/**
 	 * Loading thread.
 	 */
-	public class ArxivLoadingThread extends Thread
+	private class ArxivLoadingThread extends Thread
 	{
 		public synchronized void run()
 		{
@@ -259,31 +258,12 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 		/* gesture detector. */
 		_gestureDetector = new GestureDetector(this, new myGestureListener());
 		
+		/* show busy box. */
+		_uiBusyBox = ProgressDialog.show(this, "",
+										 getResources().getText(R.string.loading_please_wait));
 		
-		try
-		{
-			String service=Context.CONNECTIVITY_SERVICE;
-			ConnectivityManager connectivity=(ConnectivityManager) getSystemService(service);
-			NetworkInfo wifiNetwork=connectivity.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-			NetworkInfo mobiNetwork=connectivity.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-			if(wifiNetwork.getState()==NetworkInfo.State.CONNECTED||mobiNetwork.getState()==NetworkInfo.State.CONNECTED)
-			{
-	
-				/* show busy box. */
-				_uiBusyBox = ProgressDialog.show(this, "",
-												 getResources().getText(R.string.loading_please_wait));
-			ArxivLoadingThread t = new ArxivLoadingThread();
-			t.start();
-			}
-			else{
-				/* show no network  box. */
-				UiUtils.showErrorMessage(this, getResources().getString(R.string.No_Network));
-			}
-		}
-		catch (Exception e)
-		{
-			UiUtils.showErrorMessage(this, e.getMessage());
-		}
+		ArxivLoadingThread t = new ArxivLoadingThread();
+		t.start();
 	}
 	
 	/**

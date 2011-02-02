@@ -49,14 +49,12 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 	private ListView _uiCategoryList = null;
 	private ListView _uiRecentList = null;
 	private ListView _uiFavoriteList = null;
-	private CatAdapter ca;
+	
 	/** gesture detector. */
 	private GestureDetector _gestureDetector = null;
 	
 	/** Url table. */
 	public static final UrlTable _urlTbl = new UrlTable();
-	
-	public static boolean[]  Catflag= new boolean[20];
 	
 	/** id of current tab. */
 	private String _currentTabId = null;
@@ -167,8 +165,7 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
         _tabHost.addTab(tabspec);
         
         /* Fill the category list. */
-         ca=new CatAdapter(this, R.layout.categoryitem, /*UrlTable.Category*/ _urlTbl.getMainCategoryList());
-        _uiCategoryList.setAdapter(ca);
+        _uiCategoryList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, /*UrlTable.Category*/_urlTbl.getMainCategoryList()));
         registerForContextMenu(_uiFavoriteList);
         registerForContextMenu(_uiRecentList);
         
@@ -194,8 +191,6 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		/* category clicked. */
 		if(a.getId() == R.id.categorylist)
 		{
-			Catflag[position]=true;
-		    ca.notifyDataSetChanged();
 			String mainCatItem = (String)a.getItemAtPosition(position);
 			String[] subCatList = _urlTbl.getSubcategoryList(mainCatItem);
 			
@@ -704,9 +699,4 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 	{
 		_tabHost.setCurrentTab( (_tabHost.getCurrentTab() + 1) % 3);
 	}
-	
-	
-		
-		
-	
 }

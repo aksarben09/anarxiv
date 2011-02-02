@@ -39,5 +39,4 @@
 	
 	<string name="ctxmenu_title_delete">Delete</string>
 	<string name="ctxmenu_title_add_to_favorite">Add to Favorite</string>
-<string name="No_Network">There is no avaiable connection</string>
 </resources>

@@ -23,7 +23,7 @@ import java.util.TreeMap;
  * This class stores url and corresponding descriptions that will be displayed 
  * on the gui.
  * 
- * 
+ * @author lihe
  *
  */
 public class UrlTable 
@@ -41,9 +41,6 @@ public class UrlTable
 											 "Quantitative Finance",	// 9
 											 "Statistics"				// 10
 											 };
-	/*  flag for main category*/
-	//public TreeMap<String, Integer>  Catflag = new TreeMap<String, Integer>();
-	
 	
 	/** the BIG MAP, mapping subcategories. */
 	private TreeMap<String, TreeMap<String, String>> _BigMap = new TreeMap<String, TreeMap<String, String>>();
