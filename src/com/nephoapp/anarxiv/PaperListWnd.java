@@ -25,9 +25,9 @@ import com.nephoapp.anarxiv.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Looper;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.GestureDetector;
@@ -43,6 +43,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.view.KeyEvent;
 
 
 /**
@@ -107,13 +108,10 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 	/**
 	 * Loading thread.
 	 */
-	private class ArxivLoadingThread extends Thread
+	private class ArxivLoadingThread extends Thread implements DialogInterface.OnKeyListener
 	{
 		public synchronized void run()
 		{
-			/* get mainlooper. */
-			Looper mainLooper = Looper.getMainLooper();
-			
 			try
 			{	
 				/* get data. */
@@ -153,7 +151,7 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 							}
 						});
 			}
-			catch(ArxivLoader.LoaderException e)
+			catch (ArxivLoader.LoaderException e)
 			{	
 				final ArxivLoader.LoaderException err = e;
 				
@@ -175,6 +173,30 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 						}
 					});
 			}
+			catch (Exception e)
+			{
+				PaperListWnd.this.runOnUiThread(new Runnable()
+				{
+					public void run()
+					{
+						/* dismiss busy box if any. */
+						if (_uiBusyBox != null)
+						{
+							_uiBusyBox.dismiss();
+							_uiBusyBox = null;
+						}
+						
+						_isLoading = false;
+					}
+				});
+			}
+		}
+		
+		public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) 
+		{
+			// TODO Auto-generated method stub
+			UiUtils.showToast(PaperListWnd.this, "backkey pressed");
+			return true;
 		}
 	}
 	
@@ -217,6 +239,7 @@ public class PaperListWnd extends Activity implements OnItemClickListener, OnScr
 										 getResources().getText(R.string.loading_please_wait));
 		
 		ArxivLoadingThread t = new ArxivLoadingThread();
+//		_uiBusyBox.setOnKeyListener(t);
 		t.start();
 	}
 	
