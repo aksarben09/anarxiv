@@ -71,6 +71,10 @@ public class PaperDetailWnd_2 extends PaperDetailWnd
 									}
 								});
 			}
+			catch (Exception e)
+			{
+				
+			}
 			
 			/* dismiss waiting box. */
 			if (_uiBusyBox != null)

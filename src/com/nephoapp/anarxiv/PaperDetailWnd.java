@@ -188,20 +188,27 @@ public class PaperDetailWnd extends Activity
 		public void run()
 		{
 			/* try to get file size. */
-			final int fileSize = ArxivFileDownloader.getFileSize(_fileUrl);
-			
-			PaperDetailWnd.this.runOnUiThread(
-												new Runnable() 
-												{
-													public void run() 
+			try
+			{
+				final int fileSize = ArxivFileDownloader.getFileSize(_fileUrl);
+				
+				PaperDetailWnd.this.runOnUiThread(
+													new Runnable() 
 													{
-														if (fileSize != -1)
-															_uiFileSize.setText("File Size: " + fileSize / 1000 + " KB");
-														else
-															_uiFileSize.setText("File Size: unknown");
+														public void run() 
+														{
+															if (fileSize != -1)
+																_uiFileSize.setText("File Size: " + fileSize / 1000 + " KB");
+															else
+																_uiFileSize.setText("File Size: unknown");
+														}
 													}
-												}
-											 );
+												 );
+			}
+			catch (Exception e)
+			{
+				
+			}
 		}
 	}
 	
