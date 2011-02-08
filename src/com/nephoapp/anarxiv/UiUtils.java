@@ -22,10 +22,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.widget.Toast;
 
-/**
- * @author lihe
- *
- */
 public class UiUtils 
 {
 	/**
