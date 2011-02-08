@@ -35,12 +35,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-
-
-/**
- * @author lihe
- *
- */
 public class SubCategoryWnd extends Activity implements OnItemClickListener
 {
 	/* ui components. */

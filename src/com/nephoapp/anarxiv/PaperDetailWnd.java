@@ -39,11 +39,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-
-/**
- * @author lihe
- *
- */
 public class PaperDetailWnd extends Activity 
 {
 	/**

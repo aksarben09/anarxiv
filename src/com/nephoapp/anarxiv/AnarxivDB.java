@@ -26,10 +26,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
-/**
- * @author lihe
- *
- */
 public class AnarxivDB
 {
 	/**
