@@ -22,6 +22,7 @@ import java.util.List;
 
 import com.nephoapp.anarxiv.R;
 import com.nephoapp.ui.Workspace;
+import com.nephoapp.ui.TabContainer;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -45,7 +46,8 @@ import android.widget.TabHost;
 public class anarxiv extends Activity implements AdapterView.OnItemClickListener, TabHost.OnTabChangeListener, Workspace.OnViewSwitchedListener
 {
 	/** UI components. */
-	private TabHost _tabHost = null;
+//	private TabHost _tabHost = null;
+	private TabContainer _tabHost = null;
 	
 	private ListView _uiCategoryList = null;
 	private ListView _uiRecentList = null;
@@ -151,26 +153,28 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
         
 		/* Tab host setup. */
 //		_tabHost = (TabHost)findViewById(R.id.tabhost);
-//		_tabHost.setup();
+		_tabHost = (TabContainer)findViewById(R.id.tabhost);
+		_tabHost.setup();
 //		_tabHost.setOnTabChangedListener(this);
 
 		/* Category tab. */
 //		TabHost.TabSpec tabspec = _tabHost.newTabSpec(res.getString(R.string.tabid_Category));
-//		tabspec.setIndicator(res.getString(R.string.tabstr_Category));
+		TabContainer.TabSpec tabspec = _tabHost.newTabSpec(res.getString(R.string.tabid_Category));
+		tabspec.setIndicator(res.getString(R.string.tabstr_Category));
 //		tabspec.setContent(R.id.categorylist);
-//		_tabHost.addTab(tabspec);
+		_tabHost.addTab(tabspec);
 
 		/* Recent tab. */
-//		tabspec = _tabHost.newTabSpec(res.getString(R.string.tabid_Recent));
-//		tabspec.setIndicator(res.getString(R.string.tabstr_Recent));
+		tabspec = _tabHost.newTabSpec(res.getString(R.string.tabid_Recent));
+		tabspec.setIndicator(res.getString(R.string.tabstr_Recent));
 //		tabspec.setContent(R.id.recentlist);
-//		_tabHost.addTab(tabspec);
+		_tabHost.addTab(tabspec);
 
 		/* Favorite tab. */
-//		tabspec = _tabHost.newTabSpec(res.getString(R.string.tabid_Favorite));
-//		tabspec.setIndicator(res.getString(R.string.tabstr_Favorite));
+		tabspec = _tabHost.newTabSpec(res.getString(R.string.tabid_Favorite));
+		tabspec.setIndicator(res.getString(R.string.tabstr_Favorite));
 //		tabspec.setContent(R.id.favlist);
-//		_tabHost.addTab(tabspec);
+		_tabHost.addTab(tabspec);
 
 		/* Fill the category list. */
 		_uiCategoryList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, /*UrlTable.Category*/_urlTbl.getMainCategoryList()));
