@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.nephoapp.anarxiv.R;
+import com.nephoapp.ui.Workspace;
+import com.nephoapp.ui.TabContainer;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -41,17 +43,19 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TabHost;
 
-public class anarxiv extends Activity implements AdapterView.OnItemClickListener, TabHost.OnTabChangeListener
+public class anarxiv extends Activity implements AdapterView.OnItemClickListener, TabContainer.OnTabChangeListener, Workspace.OnViewSwitchedListener
 {
 	/** UI components. */
-	private TabHost _tabHost = null;
+//	private TabHost _tabHost = null;
+	private TabContainer _tabHost = null;
 	
 	private ListView _uiCategoryList = null;
 	private ListView _uiRecentList = null;
 	private ListView _uiFavoriteList = null;
+	private Workspace _uiWorkspace = null;
 	
 	/** gesture detector. */
-	private GestureDetector _gestureDetector = null;
+//	private GestureDetector _gestureDetector = null;
 	
 	/** Url table. */
 	public static final UrlTable _urlTbl = new UrlTable();
@@ -66,26 +70,26 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 	/**
 	 * gesture handler.
 	 */
-	private class myOnGestureListener extends GestureDetector.SimpleOnGestureListener
-	{
+//	private class myOnGestureListener extends GestureDetector.SimpleOnGestureListener
+//	{
 		/* onFling. */
-		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
-		{
-			if (e1.getX() - e2.getX() > ConstantTable.FLING_MIN_DISTANCE && 
-					Math.abs(velocityX) > ConstantTable.FLING_MIN_VELOCITY)
-			{
-				gotoLeftTab();
-			}
-			else if (e2.getX() - e1.getX() > ConstantTable.FLING_MIN_DISTANCE &&
-						Math.abs(velocityX) > ConstantTable.FLING_MIN_VELOCITY)
-			{
-				gotoRightTab();
-			}
+//		@Override
+//		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
+//		{
+//			if (e1.getX() - e2.getX() > ConstantTable.FLING_MIN_DISTANCE && 
+//					Math.abs(velocityX) > ConstantTable.FLING_MIN_VELOCITY)
+//			{
+//				gotoLeftTab();
+//			}
+//			else if (e2.getX() - e1.getX() > ConstantTable.FLING_MIN_DISTANCE &&
+//						Math.abs(velocityX) > ConstantTable.FLING_MIN_VELOCITY)
+//			{
+//				gotoRightTab();
+//			}
 			
-			return super.onFling(e1, e2, velocityX, velocityY);
-		}
-	}
+//			return super.onFling(e1, e2, velocityX, velocityY);
+//		}
+//	}
 	
 	/**
 	 * check app root dir; create if not exists.
@@ -112,7 +116,7 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
     public void onCreate(Bundle savedInstanceState)
     {
     	super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		setContentView(R.layout.main_workspace);
     	
 		try
 		{
@@ -129,59 +133,74 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		}
     	
 		/* get resource manager. */
-	    Resources res = getResources();
+		Resources res = getResources();
 	    
-	    /* get ui components. */
-	    _uiCategoryList = (ListView)findViewById(R.id.categorylist);
-	    _uiRecentList = (ListView)findViewById(R.id.recentlist);
-	    _uiFavoriteList = (ListView)findViewById(R.id.favlist);
+		/* get ui components. */
+		_uiCategoryList = (ListView)findViewById(R.id.categorylist);
+		_uiRecentList = (ListView)findViewById(R.id.recentlist);
+		_uiFavoriteList = (ListView)findViewById(R.id.favlist);
+		_uiWorkspace = (Workspace)findViewById(R.id.workspace);
+		
+		/* set tags for each view in the workspace so they can be identified. */
+		_uiCategoryList.setTag(res.getString(R.string.tabid_Category));
+		_uiRecentList.setTag(res.getString(R.string.tabid_Recent));
+		_uiFavoriteList.setTag(res.getString(R.string.tabid_Favorite));
+
+		/* event handler. */
+		_uiCategoryList.setOnItemClickListener(this);
+		_uiRecentList.setOnItemClickListener(this);
+		_uiFavoriteList.setOnItemClickListener(this);
         
-	    /* event handler. */
-        _uiCategoryList.setOnItemClickListener(this);
-        _uiRecentList.setOnItemClickListener(this);
-        _uiFavoriteList.setOnItemClickListener(this);
-        
-        /* Tab host setup. */
-        _tabHost = (TabHost)findViewById(R.id.tabhost);
-        _tabHost.setup();
-        _tabHost.setOnTabChangedListener(this);
-        
-        /* Category tab. */
-        TabHost.TabSpec tabspec = _tabHost.newTabSpec(res.getString(R.string.tabid_Category));
-        tabspec.setIndicator(res.getString(R.string.tabstr_Category));
-        tabspec.setContent(R.id.categorylist);
-        _tabHost.addTab(tabspec);
-        
-        /* Recent tab. */
-        tabspec = _tabHost.newTabSpec(res.getString(R.string.tabid_Recent));
-        tabspec.setIndicator(res.getString(R.string.tabstr_Recent));
-        tabspec.setContent(R.id.recentlist);
-        _tabHost.addTab(tabspec);
-        
-        /* Favorite tab. */
-        tabspec = _tabHost.newTabSpec(res.getString(R.string.tabid_Favorite));
-        tabspec.setIndicator(res.getString(R.string.tabstr_Favorite));
-        tabspec.setContent(R.id.favlist);
-        _tabHost.addTab(tabspec);
-        
-        /* Fill the category list. */
-        _uiCategoryList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, /*UrlTable.Category*/_urlTbl.getMainCategoryList()));
-        registerForContextMenu(_uiFavoriteList);
-        registerForContextMenu(_uiRecentList);
-        
-        /* gesture detector. */
-        _gestureDetector = new GestureDetector(this, new myOnGestureListener());
+		/* Tab host setup. */
+//		_tabHost = (TabHost)findViewById(R.id.tabhost);
+		_tabHost = (TabContainer)findViewById(R.id.tabhost);
+		_tabHost.setup();
+		_tabHost.setOnTabChangedListener(this);
+
+		/* Category tab. */
+//		TabHost.TabSpec tabspec = _tabHost.newTabSpec(res.getString(R.string.tabid_Category));
+		TabContainer.TabSpec tabspec = _tabHost.newTabSpec(res.getString(R.string.tabid_Category));
+		tabspec.setIndicator(res.getString(R.string.tabstr_Category));
+//		tabspec.setContent(R.id.categorylist);
+		_tabHost.addTab(tabspec);
+
+		/* Recent tab. */
+		tabspec = _tabHost.newTabSpec(res.getString(R.string.tabid_Recent));
+		tabspec.setIndicator(res.getString(R.string.tabstr_Recent));
+//		tabspec.setContent(R.id.recentlist);
+		_tabHost.addTab(tabspec);
+
+		/* Favorite tab. */
+		tabspec = _tabHost.newTabSpec(res.getString(R.string.tabid_Favorite));
+		tabspec.setIndicator(res.getString(R.string.tabstr_Favorite));
+//		tabspec.setContent(R.id.favlist);
+		_tabHost.addTab(tabspec);
+		
+		// FIXME: set this handler when every thing is done.
+		// the handler is called as soon as it is set.
+		// so be sure all view id's are set before this.
+		// for here, tab container must be initialized first,
+		// since the handler is called right after the handler is set.
+		_uiWorkspace.setOnViewSwitchedListener(this);
+
+		/* Fill the category list. */
+		_uiCategoryList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, /*UrlTable.Category*/_urlTbl.getMainCategoryList()));
+		registerForContextMenu(_uiFavoriteList);
+		registerForContextMenu(_uiRecentList);
+
+		/* gesture detector. */
+//		_gestureDetector = new GestureDetector(this, new myOnGestureListener());
 	}
-    
-    /**
-     * we have to intercept touch event to get the detector working.
-     */
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev)
-    {
-    	_gestureDetector.onTouchEvent(ev);
-    	return super.dispatchTouchEvent(ev);
-    }
+
+	/**
+	 * we have to intercept touch event to get the detector working.
+	 */
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent ev)
+	{
+//		_gestureDetector.onTouchEvent(ev);
+		return super.dispatchTouchEvent(ev);
+	}
 
     /** 
      * Handler: onItemClick. 
@@ -268,6 +287,36 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 			else if (_FavoriteTabState == R.id.mainmenu_favorite_paper)
 				loadFavoritePapers();
 		}
+		
+		/* switch to the view. */
+		_uiWorkspace.setCurrentScreen(_currentTabId);
+	}
+	
+	/**
+	 * 
+	 */
+	public void onViewSwitched(View v, Object tag, int index)
+	{
+		_currentTabId = (String)tag;
+		
+		/* tab recent is clicked. */
+		if (getResources().getString(R.string.tabid_Recent).equals(_currentTabId))
+		{
+			if (_RecentTabState == R.id.mainmenu_recent_category)
+				loadRecentCategories();
+			else if (_RecentTabState == R.id.mainmenu_recent_paper)
+				loadRecentPapers();
+		}
+		else if (getResources().getString(R.string.tabid_Favorite).equals(_currentTabId))
+		{
+			if (_FavoriteTabState == R.id.mainmenu_favorite_category)
+				loadFavoriteCategories();
+			else if (_FavoriteTabState == R.id.mainmenu_favorite_paper)
+				loadFavoritePapers();
+		}
+		
+		/* switch to the view specified by the tag. */
+		_tabHost.setCurrentTabByTag(_currentTabId);
 	}
 	
 	/**
