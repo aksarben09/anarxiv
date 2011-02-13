@@ -225,6 +225,8 @@ public class Workspace extends ViewGroup
 	}
 	
 	/**
+	 * Sets the listener for screen switch. Note that the listener is called right after it is set.
+	 * So be sure the ID's are set appropriately when calling this method.
 	 * @author ritsu
 	 * @param l
 	 */

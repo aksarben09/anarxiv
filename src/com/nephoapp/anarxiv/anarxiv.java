@@ -43,7 +43,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TabHost;
 
-public class anarxiv extends Activity implements AdapterView.OnItemClickListener, TabHost.OnTabChangeListener, Workspace.OnViewSwitchedListener
+public class anarxiv extends Activity implements AdapterView.OnItemClickListener, TabContainer.OnTabChangeListener, Workspace.OnViewSwitchedListener
 {
 	/** UI components. */
 //	private TabHost _tabHost = null;
@@ -140,22 +140,22 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		_uiRecentList = (ListView)findViewById(R.id.recentlist);
 		_uiFavoriteList = (ListView)findViewById(R.id.favlist);
 		_uiWorkspace = (Workspace)findViewById(R.id.workspace);
+		
+		/* set tags for each view in the workspace so they can be identified. */
+		_uiCategoryList.setTag(res.getString(R.string.tabid_Category));
+		_uiRecentList.setTag(res.getString(R.string.tabid_Recent));
+		_uiFavoriteList.setTag(res.getString(R.string.tabid_Favorite));
 
 		/* event handler. */
 		_uiCategoryList.setOnItemClickListener(this);
 		_uiRecentList.setOnItemClickListener(this);
 		_uiFavoriteList.setOnItemClickListener(this);
-		_uiWorkspace.setOnViewSwitchedListener(this);
-		
-		_uiCategoryList.setTag(res.getString(R.string.tabid_Category));
-		_uiRecentList.setTag(res.getString(R.string.tabid_Recent));
-		_uiFavoriteList.setTag(res.getString(R.string.tabid_Favorite));
         
 		/* Tab host setup. */
 //		_tabHost = (TabHost)findViewById(R.id.tabhost);
 		_tabHost = (TabContainer)findViewById(R.id.tabhost);
 		_tabHost.setup();
-//		_tabHost.setOnTabChangedListener(this);
+		_tabHost.setOnTabChangedListener(this);
 
 		/* Category tab. */
 //		TabHost.TabSpec tabspec = _tabHost.newTabSpec(res.getString(R.string.tabid_Category));
@@ -175,6 +175,13 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		tabspec.setIndicator(res.getString(R.string.tabstr_Favorite));
 //		tabspec.setContent(R.id.favlist);
 		_tabHost.addTab(tabspec);
+		
+		// FIXME: set this handler when every thing is done.
+		// the handler is called as soon as it is set.
+		// so be sure all view id's are set before this.
+		// for here, tab container must be initialized first,
+		// since the handler is called right after the handler is set.
+		_uiWorkspace.setOnViewSwitchedListener(this);
 
 		/* Fill the category list. */
 		_uiCategoryList.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, /*UrlTable.Category*/_urlTbl.getMainCategoryList()));
@@ -280,6 +287,9 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 			else if (_FavoriteTabState == R.id.mainmenu_favorite_paper)
 				loadFavoritePapers();
 		}
+		
+		/* switch to the view. */
+		_uiWorkspace.setCurrentScreen(_currentTabId);
 	}
 	
 	/**
@@ -304,6 +314,9 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 			else if (_FavoriteTabState == R.id.mainmenu_favorite_paper)
 				loadFavoritePapers();
 		}
+		
+		/* switch to the view specified by the tag. */
+		_tabHost.setCurrentTabByTag(_currentTabId);
 	}
 	
 	/**
