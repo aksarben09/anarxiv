@@ -36,7 +36,8 @@ public class UrlTable
 											 "Computer Science",		// 7
 											 "Quantitative Biology",	// 8
 											 "Quantitative Finance",	// 9
-											 "Statistics"				// 10
+											 "Statistics",				// 10
+											 "Relativity, Quantum and Mathematical Physics"
 											 };
 	
 	/** the BIG MAP, mapping subcategories. */
@@ -76,6 +77,9 @@ public class UrlTable
 	/** sub category: statistics. */
 	private TreeMap<String, String> _UrlMap_Statistics = new TreeMap<String, String>();
 	
+	/** sub category: relativity and quantum. */
+	private TreeMap<String, String> _UrlMap_GRQM = new TreeMap<String, String>();
+	
 	/** 
 	 * constructor.
 	 * maps are built here.
@@ -102,6 +106,7 @@ public class UrlTable
 		this._BigMap.put(UrlTable.Category[8], this._UrlMap_QuantBio);
 		this._BigMap.put(UrlTable.Category[9], this._UrlMap_QuantFinance);
 		this._BigMap.put(UrlTable.Category[10], this._UrlMap_Statistics);
+		this._BigMap.put(UrlTable.Category[11], this._UrlMap_GRQM);
 	}
 	
 	/**
@@ -280,6 +285,11 @@ public class UrlTable
 		this._UrlMap_Statistics.put("Methodology", 			"stat.ME");
 		this._UrlMap_Statistics.put("Other Statistics", 	"stat.OT");
 		this._UrlMap_Statistics.put("Statistics Theory", 	"stat.TH");
+		
+		/* relativity and etc. */
+		this._UrlMap_GRQM.put("General Relativity and Quantum Cosmology", "gr-qc");
+		this._UrlMap_GRQM.put("Mathematical Physics", "math-ph");
+		this._UrlMap_GRQM.put("Quantum Physics", "quant-ph");
 	}
 	
 	/**
