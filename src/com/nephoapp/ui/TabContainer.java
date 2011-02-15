@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+ * This class is adapted from android source code by combining TabHost and TabWidget.
+ */
+
 package com.nephoapp.ui;
 
 import java.util.ArrayList;
@@ -531,10 +535,6 @@ public class TabContainer extends LinearLayout implements View.OnFocusChangeList
 		if (!handled
 				&& (event.getAction() == KeyEvent.ACTION_DOWN)
 				&& (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP)
-//				&& (mCurrentView != null)
-//				&& (mCurrentView.isRootNamespace())
-//				&& (mCurrentView.hasFocus())
-//				&& (mCurrentView.findFocus().focusSearch(View.FOCUS_UP) == null)
 			)
 		{
 			getChildTabViewAt(mCurrentTab).requestFocus();
@@ -557,14 +557,12 @@ public class TabContainer extends LinearLayout implements View.OnFocusChangeList
 		}
 
 		mCurrentTab = index;
-//		final TabSpec spec = mTabSpecs.get(index);
 
 		// Call the tab widget's focusCurrentTab(), instead of just
 		// selecting the tab.
 		this.focusCurrentTab(mCurrentTab);
 
-        //mTabContent.requestFocus(View.FOCUS_FORWARD);
-        invokeOnTabChangeListener();
+		invokeOnTabChangeListener();
     }
 	
 	/**
@@ -699,36 +697,39 @@ public class TabContainer extends LinearLayout implements View.OnFocusChangeList
 		}
 	}
 
-    /**
-     * How we create a tab indicator that has a label and an icon
-     */
-    private class LabelAndIconIndicatorStrategy implements IndicatorStrategy {
+	/**
+	 * How we create a tab indicator that has a label and an icon
+	 */
+	private class LabelAndIconIndicatorStrategy implements IndicatorStrategy
+	{
 
-        private final CharSequence mLabel;
-        private final Drawable mIcon;
+		private final CharSequence mLabel;
+		private final Drawable mIcon;
 
-        private LabelAndIconIndicatorStrategy(CharSequence label, Drawable icon) {
-            mLabel = label;
-            mIcon = icon;
-        }
+		private LabelAndIconIndicatorStrategy(CharSequence label, Drawable icon)
+		{
+			mLabel = label;
+			mIcon = icon;
+		}
 
-        public View createIndicatorView() {
-            final Context context = getContext();
-            LayoutInflater inflater =
-                    (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View tabIndicator = inflater.inflate(R.layout.tab_indicator,
-                    TabContainer.this, // tab widget is the parent
-                    false); // no inflate params
+		public View createIndicatorView()
+		{
+			final Context context = getContext();
+			LayoutInflater inflater =
+				(LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View tabIndicator = inflater.inflate(R.layout.tab_indicator,
+					TabContainer.this, // tab widget is the parent
+					false); // no inflate params
 
-            final TextView tv = (TextView) tabIndicator.findViewById(R.id.title);
-            tv.setText(mLabel);
+			final TextView tv = (TextView) tabIndicator.findViewById(R.id.title);
+			tv.setText(mLabel);
 
-            final ImageView iconView = (ImageView) tabIndicator.findViewById(R.id.icon);
-            iconView.setImageDrawable(mIcon);
-            
-            return tabIndicator;
-        }
-    }
+			final ImageView iconView = (ImageView) tabIndicator.findViewById(R.id.icon);
+			iconView.setImageDrawable(mIcon);
+
+			return tabIndicator;
+		}
+	}
     
 	/**
 	 * Let {@link TabHost} know that the user clicked on a tab indicator.

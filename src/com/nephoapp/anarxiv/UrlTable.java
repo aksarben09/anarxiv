@@ -25,6 +25,49 @@ import java.util.TreeMap;
  */
 public class UrlTable 
 {
+	/**
+	 * 
+	 */
+	public static class CategoryItem
+	{
+		/**
+		 * 
+		 */
+		public CategoryItem()
+		{
+			this(null, null);
+		}
+		
+		/**
+		 * 
+		 * @param name
+		 */
+		public CategoryItem(String name)
+		{
+			this(name, null);
+		}
+		
+		/**
+		 * 
+		 * @param name
+		 * @param url
+		 */
+		public CategoryItem(String name, String url)
+		{
+			_name = name;
+			_url = url;
+		}
+		
+		/** the user-friendly name of this category. */
+		public String _name;
+		
+		/** the corresponding url; null if this item is a sub-category. */
+		public String _url;
+		
+		/** a tree map pointing to child category. */
+		public TreeMap<String, CategoryItem> _subcategory;
+	}
+	
 	/** main category. */
 	public final static String[] Category = {"Astrophysics", 			// 0
 											 "Condensed Matter",		// 1

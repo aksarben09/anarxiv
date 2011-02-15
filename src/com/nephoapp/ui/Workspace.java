@@ -18,6 +18,9 @@
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
+ * 
+ * This class is adapted from the android source code,
+ * located at platform/packages/apps/Launcher.git/ Workspace.java.
  */
 package com.nephoapp.ui;
 
@@ -48,25 +51,12 @@ public class Workspace extends ViewGroup
 	private static final int SNAP_VELOCITY = 1000;
 
 	private int mDefaultScreen;
-	 
-//	private final WallpaperManager mWallpaperManager;
-	 
 	private boolean mFirstLayout = true;
 
 	private int mCurrentScreen;
 	private int mNextScreen = INVALID_SCREEN;
 	private Scroller mScroller;
 	private VelocityTracker mVelocityTracker;
-	 
-	/**
-	 * CellInfo for the cell that is currently being dragged
-	 */
-//	private CellLayout.CellInfo mDragInfo;
-	
-	/**
-     * Target drop area calculated during last acceptDrop call.
-     */
-//	private int[] mTargetCell = null;
 
 	private float mLastMotionX;
 	private float mLastMotionY;
@@ -76,24 +66,7 @@ public class Workspace extends ViewGroup
 
 	private int mTouchState = TOUCH_STATE_REST;
 
-//	private OnLongClickListener mLongClickListener;
 	private OnViewSwitchedListener mViewSwitchedListener = null;
-	
-//	private int mLeft = 0;
-//	private int mRight = 0;
-//	private int mScrollX = 0;
-//	private int mScrollY = 0;
-
-//	private Launcher mLauncher;
-//	private DragController mDragger;
-	
-	/**
-     * Cache of vacant cells, used during drag events and invalidated as needed.
-     */
-//	private CellLayout.CellInfo mVacantCache = null;
-    
-//	private int[] mTempCell = new int[2];
-//	private int[] mTempEstimate = new int[2];
 
 	private boolean mAllowLongPress;
 	private boolean mLocked;
@@ -137,8 +110,6 @@ public class Workspace extends ViewGroup
 	{
 		super(context, attrs, defStyle);
 
-//		mWallpaperManager = WallpaperManager.getInstance(context);
-
 //		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Workspace, defStyle, 0);
 		mDefaultScreen = /*a.getInt(R.styleable.Workspace_defaultScreen, 1)*/0;
 //		a.recycle();
@@ -153,7 +124,6 @@ public class Workspace extends ViewGroup
 	{
 		mScroller = new Scroller(getContext());
 		mCurrentScreen = mDefaultScreen;
-//		Launcher.setScreen(mCurrentScreen);
 
 		final ViewConfiguration configuration = ViewConfiguration.get(getContext());
 		mTouchSlop = configuration.getScaledTouchSlop();
@@ -182,7 +152,6 @@ public class Workspace extends ViewGroup
 	 */
 	void setCurrentScreen(int currentScreen)
 	{
-//		clearVacantCache();
 		mCurrentScreen = Math.max(0, Math.min(currentScreen, getChildCount() - 1));
 		scrollTo(mCurrentScreen * getWidth(), 0);
 		invalidate();
@@ -191,7 +160,6 @@ public class Workspace extends ViewGroup
 	/**
 	 * set the current screen using the view tag.
 	 * 
-	 * @author ritsu
 	 * @param tag
 	 */
 	public void setCurrentScreen(Object tag)
@@ -216,7 +184,6 @@ public class Workspace extends ViewGroup
 	@Override
 	public void setOnLongClickListener(OnLongClickListener l)
 	{
-//		mLongClickListener = l;
 		final int count = getChildCount();
 		for (int i = 0; i < count; i++)
 		{
@@ -227,7 +194,6 @@ public class Workspace extends ViewGroup
 	/**
 	 * Sets the listener for screen switch. Note that the listener is called right after it is set.
 	 * So be sure the ID's are set appropriately when calling this method.
-	 * @author ritsu
 	 * @param l
 	 */
 	public void setOnViewSwitchedListener(OnViewSwitchedListener l)
@@ -249,8 +215,6 @@ public class Workspace extends ViewGroup
 
 	private void updateWallpaperOffset(int scrollRange)
 	{
-//		mWallpaperManager.setWallpaperOffsetSteps(1.0f / (getChildCount() - 1), 0 );
-//		mWallpaperManager.setWallpaperOffsets(getWindowToken(), getScrollX() / (float) scrollRange, 0);
 	}
 	
 	@Override
@@ -265,9 +229,7 @@ public class Workspace extends ViewGroup
 		else if (mNextScreen != INVALID_SCREEN)
 		{
 			mCurrentScreen = Math.max(0, Math.min(mNextScreen, getChildCount() - 1));
-//			Launcher.setScreen(mCurrentScreen);
 			mNextScreen = INVALID_SCREEN;
-//			clearChildrenCache();
 		}
 	}
     
@@ -396,7 +358,7 @@ public class Workspace extends ViewGroup
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev)
 	{
-		if (mLocked /*|| !mLauncher.isDrawerDown()*/) 
+		if (mLocked) 
 		{
 			return true;
 		}
@@ -447,7 +409,6 @@ public class Workspace extends ViewGroup
 					{
 						// Scroll if the user moved far enough along the X axis
 						mTouchState = TOUCH_STATE_SCROLLING;
-//						enableChildrenCache();
 					}
 					// Either way, cancel any pending longpress
 					if (mAllowLongPress)
@@ -478,23 +439,6 @@ public class Workspace extends ViewGroup
 
 			case MotionEvent.ACTION_CANCEL:
 			case MotionEvent.ACTION_UP:
-
-//				if (mTouchState != TOUCH_STATE_SCROLLING)
-//				{
-//					final CellLayout currentScreen = (CellLayout) getChildAt(mCurrentScreen);
-//					if (!currentScreen.lastDownOnOccupiedCell())
-//					{
-//						getLocationOnScreen(mTempCell);
-						// Send a tap to the wallpaper if the last down was on empty space
-//						mWallpaperManager.sendWallpaperCommand(getWindowToken(), 
-//								"android.wallpaper.tap",
-//								mTempCell[0] + (int) ev.getX(),
-//								mTempCell[1] + (int) ev.getY(), 0, null);
-//					}
-//				}
-
-				// Release the drag
-//				clearChildrenCache();
 				mTouchState = TOUCH_STATE_REST;
 				mAllowLongPress = false;
 				break;
@@ -510,7 +454,7 @@ public class Workspace extends ViewGroup
 	@Override
 	public boolean onTouchEvent(MotionEvent ev)
 	{
-		if (mLocked /*|| !mLauncher.isDrawerDown()*/)
+		if (mLocked)
 		{
 			return true;
 		}
@@ -617,9 +561,6 @@ public class Workspace extends ViewGroup
 		if (!mScroller.isFinished())
 			return;
 
-//		clearVacantCache();
-//		enableChildrenCache();
-
 		whichScreen = Math.max(0, Math.min(whichScreen, getChildCount() - 1));
 		boolean changingScreens = whichScreen != mCurrentScreen;
         
@@ -660,13 +601,11 @@ public class Workspace extends ViewGroup
 		if (savedState.currentScreen != -1)
 		{
 			mCurrentScreen = savedState.currentScreen;
-//			Launcher.setScreen(mCurrentScreen);
 		}
 	}
 	
 	public void scrollLeft()
 	{
-//		clearVacantCache();
 		if (mNextScreen == INVALID_SCREEN && mCurrentScreen > 0 && mScroller.isFinished())
 		{
 			snapToScreen(mCurrentScreen - 1);
@@ -675,7 +614,6 @@ public class Workspace extends ViewGroup
 	
 	public void scrollRight()
 	{
-//		clearVacantCache();
 		if (mNextScreen == INVALID_SCREEN && mCurrentScreen < getChildCount() -1 &&
 				mScroller.isFinished())
 		{
@@ -688,7 +626,6 @@ public class Workspace extends ViewGroup
 		int result = -1;
 		if (v != null)
 		{
-//			ViewParent vp = v.getParent();
 			int count = getChildCount();
 			for (int i = 0; i < count; i++)
 			{
