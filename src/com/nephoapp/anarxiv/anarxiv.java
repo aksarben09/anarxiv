@@ -30,18 +30,18 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.GestureDetector;
+//import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
+//import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TabHost;
+//import android.widget.TabHost;
 
 public class anarxiv extends Activity implements AdapterView.OnItemClickListener, TabContainer.OnTabChangeListener, Workspace.OnViewSwitchedListener
 {
@@ -195,12 +195,12 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 	/**
 	 * we have to intercept touch event to get the detector working.
 	 */
-	@Override
-	public boolean dispatchTouchEvent(MotionEvent ev)
-	{
-//		_gestureDetector.onTouchEvent(ev);
-		return super.dispatchTouchEvent(ev);
-	}
+//	@Override
+//	public boolean dispatchTouchEvent(MotionEvent ev)
+//	{
+////		_gestureDetector.onTouchEvent(ev);
+//		return super.dispatchTouchEvent(ev);
+//	}
 
     /** 
      * Handler: onItemClick. 
@@ -728,24 +728,24 @@ public class anarxiv extends Activity implements AdapterView.OnItemClickListener
 		item.setVisible(visible);
 	}
 	
-	/**
-	 * swipe util: goto left tab.
-	 */
-	private void gotoLeftTab()
-	{
-		int i = _tabHost.getCurrentTab();
-		if (i == 0)
-			i = 2;
-		else
-			i --;
-		_tabHost.setCurrentTab(i);
-	}
-	
-	/**
-	 * swipe util: goto right tab.
-	 */
-	private void gotoRightTab()
-	{
-		_tabHost.setCurrentTab( (_tabHost.getCurrentTab() + 1) % 3);
-	}
+//	/**
+//	 * swipe util: goto left tab.
+//	 */
+//	private void gotoLeftTab()
+//	{
+//		int i = _tabHost.getCurrentTab();
+//		if (i == 0)
+//			i = 2;
+//		else
+//			i --;
+//		_tabHost.setCurrentTab(i);
+//	}
+//	
+//	/**
+//	 * swipe util: goto right tab.
+//	 */
+//	private void gotoRightTab()
+//	{
+//		_tabHost.setCurrentTab( (_tabHost.getCurrentTab() + 1) % 3);
+//	}
 }

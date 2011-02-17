@@ -315,6 +315,30 @@ public class PaperDetailWnd extends Activity
 				
 			}
 		}
+		else if (item.getItemId()==R.id.menu_paperdetail__add_to_favorite)
+		{
+			Intent intent = getIntent();
+			@SuppressWarnings("unchecked")
+			HashMap<String, Object> detail = (HashMap<String, Object>)intent.getSerializableExtra("paperdetail");
+			
+			/* fill in paper struct. */
+			AnarxivDB.Paper paper = new AnarxivDB.Paper();
+			paper._author = (String)detail.get("author");
+			paper._date = (String)detail.get("date");
+			paper._id = (String)detail.get("id");
+			paper._title = (String)detail.get("title");
+			paper._url = (String)detail.get("url");
+			
+			try
+			{
+				AnarxivDB.getInstance().addFavoritePaper(paper);
+				UiUtils.showToast(this, "Added to favorite: " + paper._title);
+			}
+			catch (AnarxivDB.DBException e)
+			{
+				UiUtils.showToast(this, e.getMessage());
+			}
+		}
 		
 		return super.onOptionsItemSelected(item);
 	}

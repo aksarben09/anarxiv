@@ -20,6 +20,8 @@
 		  android:title="@string/menu_paperdetail_view"/>
 	<item android:id="@+id/menu_paperdetail_delete"
 		  android:title="Delete"/>
+    <item android:id="@+id/menu_paperdetail__add_to_favorite"
+		  android:title="Add to Favorite"/>
 	<item android:id="@+id/menu_paperdetail_share" 
 		  android:title="@string/menu_paperdetail_share"
 		  android:visible="false"/>
